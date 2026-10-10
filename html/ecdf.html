@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Empirical Cumulative Distribution Function</title>
+
+  <!-- KaTeX CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css" crossorigin="anonymous">
+
+  <style>
+    :root {
+      --bg-color: #ffffff;
+      --text-color: #1f2937;
+      --border-color: #d1d5db;
+      /* Color definitions */
+      --term-ecdf: #8b5cf6;
+      --term-norm: #10b981;
+      --term-sum: #ec4899;
+      --term-ind: #3b82f6;
+      --term-value: #ef4444;
+      --term-point: #06b6d4;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'ETBembo', Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      margin: 0;
+      padding: 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 400;
+      color: var(--text-color);
+      margin-bottom: 2rem;
+    }
+
+    .equation-container {
+      padding: 2rem 0;
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .equation-container .katex {
+      font-size: 1.6rem;
+    }
+
+    .description {
+      border-top: 1px solid var(--border-color);
+      padding-top: 1.5rem;
+      margin-bottom: 2rem;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .description p + p {
+      margin-top: 1.25rem;
+    }
+
+    .description a {
+      color: #4b5563;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.18em;
+    }
+
+    .description a:hover,
+    .description a:focus-visible {
+      color: #2563eb;
+    }
+
+    .description span {
+      font-weight: 600;
+    }
+
+    /* KaTeX overlays that would swallow hovers on marked terms:
+       the radical is a 400em-wide SVG drawn over the radicand, and the empty
+       depth row of a vertical list (fractions, sums, aligned) covers the lower half */
+    .katex .hide-tail,
+    .katex .vlist-t2 > .vlist-r:last-child {
+      pointer-events: none;
+    }
+
+    /* Interactive term effects */
+    [class*="term-"] {
+      transition: opacity 0.2s ease;
+      cursor: pointer;
+    }
+
+    [class*="term-"]:hover,
+    .term-active {
+      opacity: 0.6;
+    }
+
+    .term-clicked {
+      opacity: 0.6;
+      outline: 2px solid currentColor;
+      outline-offset: 2px;
+    }
+
+    /* Hover explanation */
+    .hover-explanation {
+      border-top: 1px solid var(--border-color);
+      padding-top: 1rem;
+      margin-top: 1rem;
+      min-height: 3rem;
+      opacity: 0;
+      pointer-events: none;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--text-color);
+    }
+
+    .hover-explanation.visible {
+      opacity: 1;
+    }
+
+    .definitions {
+      display: none; /* Hidden - definitions only show on hover */
+    }
+
+    .footer {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.875rem;
+      color: #6b7280;
+      text-align: center;
+    }
+
+    /* Term color styles */
+    .term-ecdf { color: var(--term-ecdf); }
+    .term-norm { color: var(--term-norm); }
+    .term-sum { color: var(--term-sum); }
+    .term-ind { color: var(--term-ind); }
+    .term-value { color: var(--term-value); }
+    .term-point { color: var(--term-point); }
+
+    @media print {
+      body {
+        max-width: 100%;
+      }
+    }
+  
+    .eq-nav { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .eq-nav a { color: #6b7280; text-decoration: none; }
+    .eq-nav a:hover { color: #2563eb; }
+  </style>
+</head>
+<body>
+  <nav class="eq-nav">
+    <a href="mad.html">← Median Absolute Deviation</a>
+    <a href="index.html">All equations</a>
+    <a href="normal-distribution.html">Normal Distribution →</a>
+  </nav>
+  <h1>Empirical Cumulative Distribution Function</h1>
+
+  <div class="equation-container">
+    <span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mstyle mathcolor="#8b5cf6"><msub><mover accent="true"><mi>F</mi><mo>^</mo></mover><mi>n</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mstyle><mo>=</mo><mstyle mathcolor="#10b981"><mfrac><mn>1</mn><mi>n</mi></mfrac></mstyle><mstyle mathcolor="#ec4899"><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover></mstyle><mstyle mathcolor="#3b82f6"><mi mathvariant="double-struck">I</mi></mstyle><mrow><mo fence="true">(</mo><mstyle mathcolor="#ef4444"><msub><mi>x</mi><mi>i</mi></msub></mstyle><mo>≤</mo><mstyle mathcolor="#06b6d4"><mi>x</mi></mstyle><mo fence="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">\htmlClass{term-ecdf}{\textcolor{#8b5cf6}{\hat{F}_n(x)}} = \htmlClass{term-norm}{\textcolor{#10b981}{\frac{1}{n}}} \htmlClass{term-sum}{\textcolor{#ec4899}{\sum_{i=1}^{n}}} \htmlClass{term-ind}{\textcolor{#3b82f6}{\mathbb{I}}}\left( \htmlClass{term-value}{\textcolor{#ef4444}{x_i}} \le \htmlClass{term-point}{\textcolor{#06b6d4}{x}} \right)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1968em;vertical-align:-0.25em;"></span><span class="enclosing term-ecdf"><span class="mord" style="color:#8b5cf6;"><span class="mord accent" style="color:#8b5cf6;"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9468em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;color:#8b5cf6;">F</span></span><span style="top:-3.2523em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1667em;"><span class="mord" style="color:#8b5cf6;">^</span></span></span></span></span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight" style="color:#8b5cf6;"><span class="mord mathnormal mtight" style="color:#8b5cf6;">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen" style="color:#8b5cf6;">(</span><span class="mord mathnormal" style="color:#8b5cf6;">x</span><span class="mclose" style="color:#8b5cf6;">)</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.9291em;vertical-align:-1.2777em;"></span><span class="enclosing term-norm"><span class="mord" style="color:#10b981;"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="color:#10b981;"><span class="mord mathnormal" style="color:#10b981;">n</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="color:#10b981;border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="color:#10b981;"><span class="mord" style="color:#10b981;">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.1667em;"></span></span><span class="enclosing term-sum"><span class="mop op-limits" style="color:#ec4899;"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.6514em;"><span style="top:-1.8723em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight" style="color:#ec4899;"><span class="mord mtight" style="color:#ec4899;"><span class="mord mathnormal mtight" style="color:#ec4899;">i</span><span class="mrel mtight" style="color:#ec4899;">=</span><span class="mord mtight" style="color:#ec4899;">1</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op" style="color:#ec4899;">∑</span></span></span><span style="top:-4.3em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight" style="color:#ec4899;"><span class="mord mtight" style="color:#ec4899;"><span class="mord mathnormal mtight" style="color:#ec4899;">n</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.2777em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span></span><span class="enclosing term-ind"><span class="mord mathbb" style="color:#3b82f6;">I</span><span class="mspace" style="margin-right:0.1667em;"></span></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">(</span><span class="enclosing term-value"><span class="mord" style="color:#ef4444;"><span class="mord mathnormal" style="color:#ef4444;">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight" style="color:#ef4444;"><span class="mord mathnormal mtight" style="color:#ef4444;">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="enclosing term-point"><span class="mord mathnormal" style="color:#06b6d4;">x</span></span><span class="mclose delimcenter" style="top:0em;">)</span></span></span></span></span></span>
+  </div>
+
+  <div class="description">
+    <p>The <span class="term-ecdf" style="color: var(--term-ecdf); font-weight: 600;">ECDF</span> answers: what fraction of the data is at most a given <span class="term-point" style="color: var(--term-point); font-weight: 600;">value x</span>? <span class="term-ind" style="color: var(--term-ind); font-weight: 600;">Count</span> the <span class="term-value" style="color: var(--term-value); font-weight: 600;">observations</span> that are less than or equal to it, <span class="term-sum" style="color: var(--term-sum); font-weight: 600;">over all n data points</span>, and <span class="term-norm" style="color: var(--term-norm); font-weight: 600;">divide by n</span>. Plotted, it is a staircase that climbs from 0 to 1, with one step of height 1/n per observation.</p>
+<p>Read aloud: <span class="term-ecdf" style="color: var(--term-ecdf); font-weight: 600;">F hat n of x</span> equals <span class="term-norm" style="color: var(--term-norm); font-weight: 600;">one over n</span> times <span class="term-sum" style="color: var(--term-sum); font-weight: 600;">the sum from i equals one to n</span> of <span class="term-ind" style="color: var(--term-ind); font-weight: 600;">the indicator</span> that <span class="term-value" style="color: var(--term-value); font-weight: 600;">x sub i</span> is at most <span class="term-point" style="color: var(--term-point); font-weight: 600;">x</span>.</p>
+  </div>
+
+  <div id="hover-explanation" class="hover-explanation"></div>
+
+  <div class="definitions">
+    <h2 style="font-size: 1.25rem; font-weight: 400; margin-bottom: 1.5rem;">Definitions</h2>
+    
+    <div class="definition">
+      <h3 style="color: var(--term-ecdf);">ecdf</h3>
+      <p>Empirical CDF <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover accent="true"><mi>F</mi><mo>^</mo></mover><mi>n</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\hat{F}_n(x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1968em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9468em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span></span><span style="top:-3.2523em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1667em;"><span class="mord">^</span></span></span></span></span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span></span></span></span>.
+Pronounced: &quot;F hat n of x&quot;.
+Shows every data point with no binning choices, unlike a histogram. Quantiles are read off sideways: the median is where the ECDF crosses 0.5, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Q</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">Q_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal">Q</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> where it crosses 0.25. Overlaying the ECDF of the data and the CDF of a fitted model (or of simulated samples) is a quick check of a distributional assumption.
+In numpy: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="monospace">x</mtext><mtext> </mtext><mtext mathvariant="monospace">=</mtext><mtext> </mtext><mtext mathvariant="monospace">np.sort(data);</mtext><mtext> </mtext><mtext mathvariant="monospace">y</mtext><mtext> </mtext><mtext mathvariant="monospace">=</mtext><mtext> </mtext><mtext mathvariant="monospace">np.arange(1,</mtext><mtext> </mtext><mtext mathvariant="monospace">n</mtext><mtext> </mtext><mtext mathvariant="monospace">+</mtext><mtext> </mtext><mtext mathvariant="monospace">1)</mtext><mtext> </mtext><mtext mathvariant="monospace">/</mtext><mtext> </mtext><mtext mathvariant="monospace">n</mtext></mrow><annotation encoding="application/x-tex">\texttt{x = np.sort(data); y = np.arange(1, n + 1) / n}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9167em;vertical-align:-0.2222em;"></span><span class="mord text"><span class="mord texttt">x = np.sort(data); y = np.arange(1, n + 1) / n</span></span></span></span></span>, then plot <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="monospace">y</mtext></mrow><annotation encoding="application/x-tex">\texttt{y}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6528em;vertical-align:-0.2222em;"></span><span class="mord text"><span class="mord texttt">y</span></span></span></span></span> against <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="monospace">x</mtext></mrow><annotation encoding="application/x-tex">\texttt{x}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord text"><span class="mord texttt">x</span></span></span></span></span> as points or steps.</p>
+    </div>
+
+    <div class="definition">
+      <h3 style="color: var(--term-norm);">norm</h3>
+      <p>Normalization <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mn>1</mn><mi>n</mi></mfrac></mrow><annotation encoding="application/x-tex">\frac{1}{n}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1901em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8451em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span>.
+Pronounced: &quot;one over n&quot;.</p>
+    </div>
+
+    <div class="definition">
+      <h3 style="color: var(--term-sum);">sum</h3>
+      <p>Summation <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></msubsup></mrow><annotation encoding="application/x-tex">\sum_{i=1}^{n}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.104em;vertical-align:-0.2997em;"></span><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8043em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2997em;"><span></span></span></span></span></span></span></span></span></span>.
+Pronounced: &quot;the sum from i equals one to n&quot;.</p>
+    </div>
+
+    <div class="definition">
+      <h3 style="color: var(--term-ind);">ind</h3>
+      <p>Indicator function <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="double-struck">I</mi><mo stretchy="false">(</mo><mo>⋅</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathbb{I}(\cdot)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathbb">I</span><span class="mopen">(</span><span class="mord">⋅</span><span class="mclose">)</span></span></span></span>.
+Pronounced: &quot;the indicator that&quot;.
+1 if the condition holds, 0 otherwise.</p>
+    </div>
+
+    <div class="definition">
+      <h3 style="color: var(--term-value);">value</h3>
+      <p>Observation <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">x_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>.
+Pronounced: &quot;x sub i&quot;.</p>
+    </div>
+
+    <div class="definition">
+      <h3 style="color: var(--term-point);">point</h3>
+      <p>Evaluation point <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span></span></span></span>.
+Pronounced: &quot;x&quot;.
+Any number on the horizontal axis, not necessarily a data value. As <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> grows, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover accent="true"><mi>F</mi><mo>^</mo></mover><mi>n</mi></msub></mrow><annotation encoding="application/x-tex">\hat{F}_n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0968em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9468em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span></span><span style="top:-3.2523em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1667em;"><span class="mord">^</span></span></span></span></span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> converges to the true CDF <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mi>P</mi><mo stretchy="false">(</mo><mi>X</mi><mo>≤</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">F(x) = P(X \le x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">x</span><span class="mclose">)</span></span></span></span> (Glivenko–Cantelli), which is why resampling from the data (the bootstrap) works.</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Created with <a href="https://github.com/stared/equations-explained-colorfully" target="_blank">Equations Explained Colorfully</a></p>
+  </div>
+
+  <script>
+    // Interactive hover functionality
+    (function() {
+      const hoverDiv = document.getElementById('hover-explanation');
+      // Definitions with pre-rendered inline math
+      const definitions = {"ecdf":"Empirical CDF <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mover accent=\"true\"><mi>F</mi><mo>^</mo></mover><mi>n</mi></msub><mo stretchy=\"false\">(</mo><mi>x</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\hat{F}_n(x)</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:1.1968em;vertical-align:-0.25em;\"></span><span class=\"mord\"><span class=\"mord accent\"><span class=\"vlist-t\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.9468em;\"><span style=\"top:-3em;\"><span class=\"pstrut\" style=\"height:3em;\"></span><span class=\"mord mathnormal\" style=\"margin-right:0.13889em;\">F</span></span><span style=\"top:-3.2523em;\"><span class=\"pstrut\" style=\"height:3em;\"></span><span class=\"accent-body\" style=\"left:-0.1667em;\"><span class=\"mord\">^</span></span></span></span></span></span></span><span class=\"msupsub\"><span class=\"vlist-t vlist-t2\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.1514em;\"><span style=\"top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;\"><span class=\"pstrut\" style=\"height:2.7em;\"></span><span class=\"sizing reset-size6 size3 mtight\"><span class=\"mord mathnormal mtight\">n</span></span></span></span><span class=\"vlist-s\">​</span></span><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.15em;\"><span></span></span></span></span></span></span><span class=\"mopen\">(</span><span class=\"mord mathnormal\">x</span><span class=\"mclose\">)</span></span></span></span>.\nPronounced: &quot;F hat n of x&quot;.\nShows every data point with no binning choices, unlike a histogram. Quantiles are read off sideways: the median is where the ECDF crosses 0.5, <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>Q</mi><mn>1</mn></msub></mrow><annotation encoding=\"application/x-tex\">Q_1</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:0.8778em;vertical-align:-0.1944em;\"></span><span class=\"mord\"><span class=\"mord mathnormal\">Q</span><span class=\"msupsub\"><span class=\"vlist-t vlist-t2\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.3011em;\"><span style=\"top:-2.55em;margin-left:0em;margin-right:0.05em;\"><span class=\"pstrut\" style=\"height:2.7em;\"></span><span class=\"sizing reset-size6 size3 mtight\"><span class=\"mord mtight\">1</span></span></span></span><span class=\"vlist-s\">​</span></span><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.15em;\"><span></span></span></span></span></span></span></span></span></span> where it crosses 0.25. Overlaying the ECDF of the data and the CDF of a fitted model (or of simulated samples) is a quick check of a distributional assumption.\nIn numpy: <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mtext mathvariant=\"monospace\">x</mtext><mtext> </mtext><mtext mathvariant=\"monospace\">=</mtext><mtext> </mtext><mtext mathvariant=\"monospace\">np.sort(data);</mtext><mtext> </mtext><mtext mathvariant=\"monospace\">y</mtext><mtext> </mtext><mtext mathvariant=\"monospace\">=</mtext><mtext> </mtext><mtext mathvariant=\"monospace\">np.arange(1,</mtext><mtext> </mtext><mtext mathvariant=\"monospace\">n</mtext><mtext> </mtext><mtext mathvariant=\"monospace\">+</mtext><mtext> </mtext><mtext mathvariant=\"monospace\">1)</mtext><mtext> </mtext><mtext mathvariant=\"monospace\">/</mtext><mtext> </mtext><mtext mathvariant=\"monospace\">n</mtext></mrow><annotation encoding=\"application/x-tex\">\\texttt{x = np.sort(data); y = np.arange(1, n + 1) / n}</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:0.9167em;vertical-align:-0.2222em;\"></span><span class=\"mord text\"><span class=\"mord texttt\">x = np.sort(data); y = np.arange(1, n + 1) / n</span></span></span></span></span>, then plot <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mtext mathvariant=\"monospace\">y</mtext></mrow><annotation encoding=\"application/x-tex\">\\texttt{y}</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:0.6528em;vertical-align:-0.2222em;\"></span><span class=\"mord text\"><span class=\"mord texttt\">y</span></span></span></span></span> against <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mtext mathvariant=\"monospace\">x</mtext></mrow><annotation encoding=\"application/x-tex\">\\texttt{x}</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:0.4306em;\"></span><span class=\"mord text\"><span class=\"mord texttt\">x</span></span></span></span></span> as points or steps.","norm":"Normalization <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mfrac><mn>1</mn><mi>n</mi></mfrac></mrow><annotation encoding=\"application/x-tex\">\\frac{1}{n}</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:1.1901em;vertical-align:-0.345em;\"></span><span class=\"mord\"><span class=\"mopen nulldelimiter\"></span><span class=\"mfrac\"><span class=\"vlist-t vlist-t2\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.8451em;\"><span style=\"top:-2.655em;\"><span class=\"pstrut\" style=\"height:3em;\"></span><span class=\"sizing reset-size6 size3 mtight\"><span class=\"mord mtight\"><span class=\"mord mathnormal mtight\">n</span></span></span></span><span style=\"top:-3.23em;\"><span class=\"pstrut\" style=\"height:3em;\"></span><span class=\"frac-line\" style=\"border-bottom-width:0.04em;\"></span></span><span style=\"top:-3.394em;\"><span class=\"pstrut\" style=\"height:3em;\"></span><span class=\"sizing reset-size6 size3 mtight\"><span class=\"mord mtight\"><span class=\"mord mtight\">1</span></span></span></span></span><span class=\"vlist-s\">​</span></span><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.345em;\"><span></span></span></span></span></span><span class=\"mclose nulldelimiter\"></span></span></span></span></span>.\nPronounced: &quot;one over n&quot;.","sum":"Summation <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msubsup><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></msubsup></mrow><annotation encoding=\"application/x-tex\">\\sum_{i=1}^{n}</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:1.104em;vertical-align:-0.2997em;\"></span><span class=\"mop\"><span class=\"mop op-symbol small-op\" style=\"position:relative;top:0em;\">∑</span><span class=\"msupsub\"><span class=\"vlist-t vlist-t2\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.8043em;\"><span style=\"top:-2.4003em;margin-left:0em;margin-right:0.05em;\"><span class=\"pstrut\" style=\"height:2.7em;\"></span><span class=\"sizing reset-size6 size3 mtight\"><span class=\"mord mtight\"><span class=\"mord mathnormal mtight\">i</span><span class=\"mrel mtight\">=</span><span class=\"mord mtight\">1</span></span></span></span><span style=\"top:-3.2029em;margin-right:0.05em;\"><span class=\"pstrut\" style=\"height:2.7em;\"></span><span class=\"sizing reset-size6 size3 mtight\"><span class=\"mord mtight\"><span class=\"mord mathnormal mtight\">n</span></span></span></span></span><span class=\"vlist-s\">​</span></span><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.2997em;\"><span></span></span></span></span></span></span></span></span></span>.\nPronounced: &quot;the sum from i equals one to n&quot;.","ind":"Indicator function <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"double-struck\">I</mi><mo stretchy=\"false\">(</mo><mo>⋅</mo><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\mathbb{I}(\\cdot)</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:1em;vertical-align:-0.25em;\"></span><span class=\"mord mathbb\">I</span><span class=\"mopen\">(</span><span class=\"mord\">⋅</span><span class=\"mclose\">)</span></span></span></span>.\nPronounced: &quot;the indicator that&quot;.\n1 if the condition holds, 0 otherwise.","value":"Observation <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>x</mi><mi>i</mi></msub></mrow><annotation encoding=\"application/x-tex\">x_i</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:0.5806em;vertical-align:-0.15em;\"></span><span class=\"mord\"><span class=\"mord mathnormal\">x</span><span class=\"msupsub\"><span class=\"vlist-t vlist-t2\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.3117em;\"><span style=\"top:-2.55em;margin-left:0em;margin-right:0.05em;\"><span class=\"pstrut\" style=\"height:2.7em;\"></span><span class=\"sizing reset-size6 size3 mtight\"><span class=\"mord mathnormal mtight\">i</span></span></span></span><span class=\"vlist-s\">​</span></span><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.15em;\"><span></span></span></span></span></span></span></span></span></span>.\nPronounced: &quot;x sub i&quot;.","point":"Evaluation point <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>x</mi></mrow><annotation encoding=\"application/x-tex\">x</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:0.4306em;\"></span><span class=\"mord mathnormal\">x</span></span></span></span>.\nPronounced: &quot;x&quot;.\nAny number on the horizontal axis, not necessarily a data value. As <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">n</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:0.4306em;\"></span><span class=\"mord mathnormal\">n</span></span></span></span> grows, <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mover accent=\"true\"><mi>F</mi><mo>^</mo></mover><mi>n</mi></msub></mrow><annotation encoding=\"application/x-tex\">\\hat{F}_n</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:1.0968em;vertical-align:-0.15em;\"></span><span class=\"mord\"><span class=\"mord accent\"><span class=\"vlist-t\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.9468em;\"><span style=\"top:-3em;\"><span class=\"pstrut\" style=\"height:3em;\"></span><span class=\"mord mathnormal\" style=\"margin-right:0.13889em;\">F</span></span><span style=\"top:-3.2523em;\"><span class=\"pstrut\" style=\"height:3em;\"></span><span class=\"accent-body\" style=\"left:-0.1667em;\"><span class=\"mord\">^</span></span></span></span></span></span></span><span class=\"msupsub\"><span class=\"vlist-t vlist-t2\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.1514em;\"><span style=\"top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;\"><span class=\"pstrut\" style=\"height:2.7em;\"></span><span class=\"sizing reset-size6 size3 mtight\"><span class=\"mord mathnormal mtight\">n</span></span></span></span><span class=\"vlist-s\">​</span></span><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.15em;\"><span></span></span></span></span></span></span></span></span></span> converges to the true CDF <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mi>x</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mi>P</mi><mo stretchy=\"false\">(</mo><mi>X</mi><mo>≤</mo><mi>x</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">F(x) = P(X \\le x)</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:1em;vertical-align:-0.25em;\"></span><span class=\"mord mathnormal\" style=\"margin-right:0.13889em;\">F</span><span class=\"mopen\">(</span><span class=\"mord mathnormal\">x</span><span class=\"mclose\">)</span><span class=\"mspace\" style=\"margin-right:0.2778em;\"></span><span class=\"mrel\">=</span><span class=\"mspace\" style=\"margin-right:0.2778em;\"></span></span><span class=\"base\"><span class=\"strut\" style=\"height:1em;vertical-align:-0.25em;\"></span><span class=\"mord mathnormal\" style=\"margin-right:0.13889em;\">P</span><span class=\"mopen\">(</span><span class=\"mord mathnormal\" style=\"margin-right:0.07847em;\">X</span><span class=\"mspace\" style=\"margin-right:0.2778em;\"></span><span class=\"mrel\">≤</span><span class=\"mspace\" style=\"margin-right:0.2778em;\"></span></span><span class=\"base\"><span class=\"strut\" style=\"height:1em;vertical-align:-0.25em;\"></span><span class=\"mord mathnormal\">x</span><span class=\"mclose\">)</span></span></span></span> (Glivenko–Cantelli), which is why resampling from the data (the bootstrap) works."};
+      let clicked = null;
+
+      const updateTerms = (termClass, classList, action) => {
+        document.querySelectorAll('.' + termClass).forEach(el => el.classList[action](classList));
+      };
+
+      const showDefinition = (definition) => {
+        hoverDiv.innerHTML = definition;
+        hoverDiv.classList.add('visible');
+      };
+
+      document.querySelectorAll('[class*="term-"]').forEach(element => {
+        const termClass = Array.from(element.classList).find(c => c.startsWith('term-'));
+        if (!termClass) return;
+
+        const className = termClass.replace('term-', '');
+        const definition = definitions[className];
+        if (!definition) return;
+
+        element.style.cursor = 'pointer';
+
+        element.addEventListener('click', () => {
+          if (clicked?.element === element) {
+            updateTerms(termClass, 'term-clicked', 'remove');
+            clicked = null;
+            hoverDiv.classList.remove('visible');
+          } else {
+            if (clicked) updateTerms(clicked.termClass, 'term-clicked', 'remove');
+            updateTerms(termClass, 'term-clicked', 'add');
+            clicked = { element, termClass, definition };
+            showDefinition(definition);
+          }
+        });
+
+        element.addEventListener('mouseenter', () => {
+          updateTerms(termClass, 'term-active', 'add');
+          showDefinition(definition);
+        });
+
+        element.addEventListener('mouseleave', () => {
+          updateTerms(termClass, 'term-active', 'remove');
+          clicked ? showDefinition(clicked.definition) : hoverDiv.classList.remove('visible');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

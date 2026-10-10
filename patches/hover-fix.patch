@@ -1,0 +1,61 @@
+From 7b5a64d0461df1480c51d55ec92b45a0e59013db Mon Sep 17 00:00:00 2001
+From: Roland Mueller <roland.m.mueller@googlemail.com>
+Date: Sat, 10 Oct 2026 14:16:42 +0200
+Subject: [PATCH] Let hovers reach marked terms under KaTeX overlays
+
+Two KaTeX elements sit on top of marked terms and swallow mouse events:
+the radical is drawn as a 400em-wide SVG over the radicand, and the empty
+depth row of a vertical list (fractions, sums, aligned rows) covers the
+lower part of the expression. Terms under a square root or in a
+denominator therefore never received hover or click events.
+
+Make both pass pointer events through, in the live view and in the
+exported standalone HTML.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ src/components/equation/EquationDisplay.vue | 8 ++++++++
+ src/export/htmlExport.ts                    | 8 ++++++++
+ 2 files changed, 16 insertions(+)
+
+diff --git a/src/components/equation/EquationDisplay.vue b/src/components/equation/EquationDisplay.vue
+index e0b5a16..c70ee15 100644
+--- a/src/components/equation/EquationDisplay.vue
++++ b/src/components/equation/EquationDisplay.vue
+@@ -189,6 +189,14 @@ onUnmounted(() => resizeObserver?.disconnect());
+   margin: 0;
+ }
+ 
++/* KaTeX overlays that would swallow hovers on marked terms:
++   the radical is a 400em-wide SVG drawn over the radicand, and the empty
++   depth row of a vertical list (fractions, sums, aligned) covers the lower half */
++#equation-container :deep(.hide-tail),
++#equation-container :deep(.vlist-t2 > .vlist-r:last-child) {
++  pointer-events: none;
++}
++
+ .selection-overlay {
+   position: absolute;
+   top: 0;
+diff --git a/src/export/htmlExport.ts b/src/export/htmlExport.ts
+index 2e54871..42bb639 100644
+--- a/src/export/htmlExport.ts
++++ b/src/export/htmlExport.ts
+@@ -185,6 +185,14 @@ export function exportToHTML(
+       font-weight: 600;
+     }
+ 
++    /* KaTeX overlays that would swallow hovers on marked terms:
++       the radical is a 400em-wide SVG drawn over the radicand, and the empty
++       depth row of a vertical list (fractions, sums, aligned) covers the lower half */
++    .katex .hide-tail,
++    .katex .vlist-t2 > .vlist-r:last-child {
++      pointer-events: none;
++    }
++
+     /* Interactive term effects */
+     [class*="term-"] {
+       transition: opacity 0.2s ease;
+-- 
+2.53.0
+

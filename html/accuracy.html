@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accuracy</title>
+
+  <!-- KaTeX CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css" crossorigin="anonymous">
+
+  <style>
+    :root {
+      --bg-color: #ffffff;
+      --text-color: #1f2937;
+      --border-color: #d1d5db;
+      /* Color definitions */
+      --term-acc: #8b5cf6;
+      --term-tp: #10b981;
+      --term-tn: #ec4899;
+      --term-fp: #3b82f6;
+      --term-fn: #ef4444;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'ETBembo', Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      margin: 0;
+      padding: 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 400;
+      color: var(--text-color);
+      margin-bottom: 2rem;
+    }
+
+    .equation-container {
+      padding: 2rem 0;
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .equation-container .katex {
+      font-size: 1.6rem;
+    }
+
+    .description {
+      border-top: 1px solid var(--border-color);
+      padding-top: 1.5rem;
+      margin-bottom: 2rem;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .description p + p {
+      margin-top: 1.25rem;
+    }
+
+    .description a {
+      color: #4b5563;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.18em;
+    }
+
+    .description a:hover,
+    .description a:focus-visible {
+      color: #2563eb;
+    }
+
+    .description span {
+      font-weight: 600;
+    }
+
+    /* KaTeX overlays that would swallow hovers on marked terms:
+       the radical is a 400em-wide SVG drawn over the radicand, and the empty
+       depth row of a vertical list (fractions, sums, aligned) covers the lower half */
+    .katex .hide-tail,
+    .katex .vlist-t2 > .vlist-r:last-child {
+      pointer-events: none;
+    }
+
+    /* Interactive term effects */
+    [class*="term-"] {
+      transition: opacity 0.2s ease;
+      cursor: pointer;
+    }
+
+    [class*="term-"]:hover,
+    .term-active {
+      opacity: 0.6;
+    }
+
+    .term-clicked {
+      opacity: 0.6;
+      outline: 2px solid currentColor;
+      outline-offset: 2px;
+    }
+
+    /* Hover explanation */
+    .hover-explanation {
+      border-top: 1px solid var(--border-color);
+      padding-top: 1rem;
+      margin-top: 1rem;
+      min-height: 3rem;
+      opacity: 0;
+      pointer-events: none;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--text-color);
+    }
+
+    .hover-explanation.visible {
+      opacity: 1;
+    }
+
+    .definitions {
+      display: none; /* Hidden - definitions only show on hover */
+    }
+
+    .footer {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.875rem;
+      color: #6b7280;
+      text-align: center;
+    }
+
+    /* Term color styles */
+    .term-acc { color: var(--term-acc); }
+    .term-tp { color: var(--term-tp); }
+    .term-tn { color: var(--term-tn); }
+    .term-fp { color: var(--term-fp); }
+    .term-fn { color: var(--term-fn); }
+
+    @media print {
+      body {
+        max-width: 100%;
+      }
+    }
+  
+    .eq-nav { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .eq-nav a { color: #6b7280; text-decoration: none; }
+    .eq-nav a:hover { color: #2563eb; }
+  </style>
+</head>
+<body>
+  <nav class="eq-nav">
+    <a href="bayes-theorem.html">← Bayes&#039; Theorem</a>
+    <a href="index.html">All equations</a>
+    <a href="iqr.html">Interquartile Range and Boxplot Fences →</a>
+  </nav>
+  <h1>Accuracy</h1>
+
+  <div class="equation-container">
+    <span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mstyle mathcolor="#8b5cf6"><mtext>Accuracy</mtext></mstyle><mo>=</mo><mfrac><mrow><mstyle mathcolor="#10b981"><mi>T</mi><mi>P</mi></mstyle><mo>+</mo><mstyle mathcolor="#ec4899"><mi>T</mi><mi>N</mi></mstyle></mrow><mrow><mstyle mathcolor="#10b981"><mi>T</mi><mi>P</mi></mstyle><mo>+</mo><mstyle mathcolor="#ec4899"><mi>T</mi><mi>N</mi></mstyle><mo>+</mo><mstyle mathcolor="#3b82f6"><mi>F</mi><mi>P</mi></mstyle><mo>+</mo><mstyle mathcolor="#ef4444"><mi>F</mi><mi>N</mi></mstyle></mrow></mfrac></mrow><annotation encoding="application/x-tex">\htmlClass{term-acc}{\textcolor{#8b5cf6}{\text{Accuracy}}} = \frac{\htmlClass{term-tp}{\textcolor{#10b981}{TP}} + \htmlClass{term-tn}{\textcolor{#ec4899}{TN}}}{\htmlClass{term-tp}{\textcolor{#10b981}{TP}} + \htmlClass{term-tn}{\textcolor{#ec4899}{TN}} + \htmlClass{term-fp}{\textcolor{#3b82f6}{FP}} + \htmlClass{term-fn}{\textcolor{#ef4444}{FN}}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="enclosing term-acc"><span class="mord text" style="color:#8b5cf6;"><span class="mord" style="color:#8b5cf6;">Accuracy</span></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.1297em;vertical-align:-0.7693em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="enclosing term-tp"><span class="mord mathnormal" style="margin-right:0.13889em;color:#10b981;">TP</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="enclosing term-tn"><span class="mord mathnormal" style="margin-right:0.10903em;color:#ec4899;">TN</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="enclosing term-fp"><span class="mord mathnormal" style="margin-right:0.13889em;color:#3b82f6;">FP</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="enclosing term-fn"><span class="mord mathnormal" style="margin-right:0.10903em;color:#ef4444;">FN</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="enclosing term-tp"><span class="mord mathnormal" style="margin-right:0.13889em;color:#10b981;">TP</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="enclosing term-tn"><span class="mord mathnormal" style="margin-right:0.10903em;color:#ec4899;">TN</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.7693em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span>
+  </div>
+
+  <div class="description">
+    <p><span class="term-acc" style="color: var(--term-acc); font-weight: 600;">Accuracy</span> is the share of predictions that are right. The four cells of the confusion matrix sort every prediction: <span class="term-tp" style="color: var(--term-tp); font-weight: 600;">true positives</span> and <span class="term-tn" style="color: var(--term-tn); font-weight: 600;">true negatives</span> are correct, while <span class="term-fp" style="color: var(--term-fp); font-weight: 600;">false positives</span> and <span class="term-fn" style="color: var(--term-fn); font-weight: 600;">false negatives</span> are the two kinds of mistakes.</p>
+<p>Read aloud: <span class="term-acc" style="color: var(--term-acc); font-weight: 600;">accuracy</span> equals <span class="term-tp" style="color: var(--term-tp); font-weight: 600;">T P</span> plus <span class="term-tn" style="color: var(--term-tn); font-weight: 600;">T N</span>, over the total of <span class="term-tp" style="color: var(--term-tp); font-weight: 600;">T P</span>, <span class="term-tn" style="color: var(--term-tn); font-weight: 600;">T N</span>, <span class="term-fp" style="color: var(--term-fp); font-weight: 600;">F P</span> and <span class="term-fn" style="color: var(--term-fn); font-weight: 600;">F N</span>.</p>
+  </div>
+
+  <div id="hover-explanation" class="hover-explanation"></div>
+
+  <div class="definitions">
+    <h2 style="font-size: 1.25rem; font-weight: 400; margin-bottom: 1.5rem;">Definitions</h2>
+    
+    <div class="definition">
+      <h3 style="color: var(--term-acc);">acc</h3>
+      <p>Accuracy.
+Pronounced: &quot;accuracy&quot;.
+The fraction of correct predictions, between 0 and 1. The error rate (misclassification rate) is <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>−</mo><mtext>Accuracy</mtext></mrow><annotation encoding="application/x-tex">1 - \text{Accuracy}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">Accuracy</span></span></span></span></span>; it is the average of the 0-1 loss, which charges 1 for every mistake and 0 otherwise.
+Accuracy misleads when classes are imbalanced: if 99% of emails are not spam, always predicting &quot;not spam&quot; scores 99% while catching nothing. It also treats both error types as equally costly, which they rarely are. A loss function with different costs for false positives and false negatives fixes that.</p>
+    </div>
+
+    <div class="definition">
+      <h3 style="color: var(--term-tp);">tp</h3>
+      <p>True positives <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi><mi>P</mi></mrow><annotation encoding="application/x-tex">TP</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">TP</span></span></span></span>.
+Pronounced: &quot;T P&quot;, or &quot;true positives&quot;.
+Cases predicted positive that really are positive. Example: a sick patient whose test says &quot;sick&quot;.</p>
+    </div>
+
+    <div class="definition">
+      <h3 style="color: var(--term-tn);">tn</h3>
+      <p>True negatives <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi><mi>N</mi></mrow><annotation encoding="application/x-tex">TN</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">TN</span></span></span></span>.
+Pronounced: &quot;T N&quot;, or &quot;true negatives&quot;.
+Cases predicted negative that really are negative.</p>
+    </div>
+
+    <div class="definition">
+      <h3 style="color: var(--term-fp);">fp</h3>
+      <p>False positives <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mi>P</mi></mrow><annotation encoding="application/x-tex">FP</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">FP</span></span></span></span>.
+Pronounced: &quot;F P&quot;, or &quot;false positives&quot;. Also called Type I errors or false alarms.
+Cases predicted positive that are actually negative. Example: a healthy patient told they are sick.</p>
+    </div>
+
+    <div class="definition">
+      <h3 style="color: var(--term-fn);">fn</h3>
+      <p>False negatives <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mi>N</mi></mrow><annotation encoding="application/x-tex">FN</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">FN</span></span></span></span>.
+Pronounced: &quot;F N&quot;, or &quot;false negatives&quot;. Also called Type II errors or misses.
+Cases predicted negative that are actually positive. Example: a sick patient sent home as healthy.</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Created with <a href="https://github.com/stared/equations-explained-colorfully" target="_blank">Equations Explained Colorfully</a></p>
+  </div>
+
+  <script>
+    // Interactive hover functionality
+    (function() {
+      const hoverDiv = document.getElementById('hover-explanation');
+      // Definitions with pre-rendered inline math
+      const definitions = {"acc":"Accuracy.\nPronounced: &quot;accuracy&quot;.\nThe fraction of correct predictions, between 0 and 1. The error rate (misclassification rate) is <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo>−</mo><mtext>Accuracy</mtext></mrow><annotation encoding=\"application/x-tex\">1 - \\text{Accuracy}</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:0.7278em;vertical-align:-0.0833em;\"></span><span class=\"mord\">1</span><span class=\"mspace\" style=\"margin-right:0.2222em;\"></span><span class=\"mbin\">−</span><span class=\"mspace\" style=\"margin-right:0.2222em;\"></span></span><span class=\"base\"><span class=\"strut\" style=\"height:0.8778em;vertical-align:-0.1944em;\"></span><span class=\"mord text\"><span class=\"mord\">Accuracy</span></span></span></span></span>; it is the average of the 0-1 loss, which charges 1 for every mistake and 0 otherwise.\nAccuracy misleads when classes are imbalanced: if 99% of emails are not spam, always predicting &quot;not spam&quot; scores 99% while catching nothing. It also treats both error types as equally costly, which they rarely are. A loss function with different costs for false positives and false negatives fixes that.","tp":"True positives <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mi>P</mi></mrow><annotation encoding=\"application/x-tex\">TP</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:0.6833em;\"></span><span class=\"mord mathnormal\" style=\"margin-right:0.13889em;\">TP</span></span></span></span>.\nPronounced: &quot;T P&quot;, or &quot;true positives&quot;.\nCases predicted positive that really are positive. Example: a sick patient whose test says &quot;sick&quot;.","tn":"True negatives <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mi>N</mi></mrow><annotation encoding=\"application/x-tex\">TN</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:0.6833em;\"></span><span class=\"mord mathnormal\" style=\"margin-right:0.10903em;\">TN</span></span></span></span>.\nPronounced: &quot;T N&quot;, or &quot;true negatives&quot;.\nCases predicted negative that really are negative.","fp":"False positives <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mi>P</mi></mrow><annotation encoding=\"application/x-tex\">FP</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:0.6833em;\"></span><span class=\"mord mathnormal\" style=\"margin-right:0.13889em;\">FP</span></span></span></span>.\nPronounced: &quot;F P&quot;, or &quot;false positives&quot;. Also called Type I errors or false alarms.\nCases predicted positive that are actually negative. Example: a healthy patient told they are sick.","fn":"False negatives <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mi>N</mi></mrow><annotation encoding=\"application/x-tex\">FN</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:0.6833em;\"></span><span class=\"mord mathnormal\" style=\"margin-right:0.10903em;\">FN</span></span></span></span>.\nPronounced: &quot;F N&quot;, or &quot;false negatives&quot;. Also called Type II errors or misses.\nCases predicted negative that are actually positive. Example: a sick patient sent home as healthy."};
+      let clicked = null;
+
+      const updateTerms = (termClass, classList, action) => {
+        document.querySelectorAll('.' + termClass).forEach(el => el.classList[action](classList));
+      };
+
+      const showDefinition = (definition) => {
+        hoverDiv.innerHTML = definition;
+        hoverDiv.classList.add('visible');
+      };
+
+      document.querySelectorAll('[class*="term-"]').forEach(element => {
+        const termClass = Array.from(element.classList).find(c => c.startsWith('term-'));
+        if (!termClass) return;
+
+        const className = termClass.replace('term-', '');
+        const definition = definitions[className];
+        if (!definition) return;
+
+        element.style.cursor = 'pointer';
+
+        element.addEventListener('click', () => {
+          if (clicked?.element === element) {
+            updateTerms(termClass, 'term-clicked', 'remove');
+            clicked = null;
+            hoverDiv.classList.remove('visible');
+          } else {
+            if (clicked) updateTerms(clicked.termClass, 'term-clicked', 'remove');
+            updateTerms(termClass, 'term-clicked', 'add');
+            clicked = { element, termClass, definition };
+            showDefinition(definition);
+          }
+        });
+
+        element.addEventListener('mouseenter', () => {
+          updateTerms(termClass, 'term-active', 'add');
+          showDefinition(definition);
+        });
+
+        element.addEventListener('mouseleave', () => {
+          updateTerms(termClass, 'term-active', 'remove');
+          clicked ? showDefinition(clicked.definition) : hoverDiv.classList.remove('visible');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

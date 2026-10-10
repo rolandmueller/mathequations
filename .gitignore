@@ -1,0 +1,5 @@
+# Upstream app, cloned and patched by `just install`
+app/
+
+node_modules/
+.DS_Store
