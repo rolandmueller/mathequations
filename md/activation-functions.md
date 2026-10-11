@@ -48,7 +48,7 @@ Pre-activation $z$.
 
 Pronounced: "z".
 
-The neuron's weighted sum of its inputs plus bias, $z = b + \sum_j w_j x_j$: the number that goes into the activation function. ReLU and sigmoid act on each neuron's $z$ separately.
+The neuron's weighted sum of its inputs plus bias, $z = \sum_j w_j x_j + b$: the number that goes into the activation function. ReLU and sigmoid act on each neuron's $z$ separately.
 
 ## .sigmoid
 

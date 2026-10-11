@@ -3,14 +3,14 @@
 ## Equation
 
 $$
-\mark[a]{a} = \mark[act]{g}\Big( \mark[bias]{b} + \mark[sum]{\sum_{j=1}^{p}} \mark[w]{w_j} \mark[x]{x_j} \Big)
+\mark[a]{a} = \mark[act]{g}\Big( \mark[sum]{\sum_{j=1}^{p}} \mark[w]{w_j} \mark[x]{x_j} + \mark[bias]{b} \Big)
 $$
 
 ## Description
 
 A neuron is a small linear model followed by a nonlinear switch. It [weighs]{.w} each [input]{.x}, [adds them up]{.sum} together with a [bias]{.bias}, and passes the total through an [activation function]{.act} to produce its [output]{.a}. A neural network stacks layers of these, feeding outputs of one layer as inputs to the next.
 
-Read aloud: [a]{.a} equals [g]{.act} of [b]{.bias} plus [the sum from j equals one to p]{.sum} of [w j]{.w} times [x j]{.x}.
+Read aloud: [a]{.a} equals [g]{.act} of [the sum from j equals one to p]{.sum} of [w j]{.w} times [x j]{.x}, plus [b]{.bias}.
 
 ## .a
 
