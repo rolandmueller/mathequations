@@ -3,14 +3,17 @@
 ## Equation
 
 $$
-\mark[ci]{\mathrm{CI}} = \mark[mean]{\bar{x}} \pm \mark[crit]{t^{\star}_{n-1}} \cdot \frac{\mark[sd]{s}}{\mark[root]{\sqrt{n}}}
+\begin{aligned}
+\mark[ci]{\mathrm{CI}} &= \mark[mean]{\bar{x}} \pm \mark[crit]{t^{\star}_{n-1}} \cdot \frac{\mark[sd]{s}}{\mark[root]{\sqrt{n}}} \\[8pt]
+\mark[ci]{\mathrm{CI}} &\approx \mark[mean]{\bar{x}} \pm \mark[zcrit]{z^{\star}} \cdot \frac{\mark[sd]{s}}{\mark[root]{\sqrt{n}}} \qquad \text{(large } n \text{)}
+\end{aligned}
 $$
 
 ## Description
 
-A [confidence interval]{.ci} puts a margin of error around the [sample mean]{.mean}. The margin is a [critical value]{.crit}, about 2 for a 95% interval, times the standard error: the [spread of the data]{.sd} divided by the [square root of the sample size]{.root}. In words: point estimate plus or minus t star times SE.
+A [confidence interval]{.ci} puts a margin of error around the [sample mean]{.mean}. The margin is a [critical value from the t distribution]{.crit} times the standard error: the [spread of the data]{.sd} divided by the [square root of the sample size]{.root}. For large samples the t distribution is practically normal, so the [normal critical value]{.zcrit}, 1.96 for a 95% interval, can be used instead. In words: point estimate plus or minus critical value times SE.
 
-Read aloud: [the confidence interval]{.ci} is [x bar]{.mean} plus or minus [t star with n minus one degrees of freedom]{.crit} times [s]{.sd} over [the square root of n]{.root}.
+Read aloud: [the confidence interval]{.ci} is [x bar]{.mean} plus or minus [t star with n minus one degrees of freedom]{.crit} times [s]{.sd} over [the square root of n]{.root}. For large n, it is approximately [x bar]{.mean} plus or minus [z star]{.zcrit} times [s]{.sd} over [the square root of n]{.root}.
 
 ## .ci
 
@@ -36,7 +39,17 @@ Critical value $t^{\star}_{n-1}$.
 
 Pronounced: "t star with n minus one degrees of freedom".
 
-The quantile of the $t$ distribution that leaves 2.5% in each tail for a 95% interval: `scipy.stats.t.ppf(0.975, df=n-1)`. Degrees of freedom are $df = n - 1$. The $t$ distribution has fatter tails than the normal to account for estimating $\sigma$ by $s$, so $t^{\star}$ is larger for small samples (2.26 at $n = 10$) and approaches the normal value $z^{\star} = 1.96$ as $n$ grows. Other levels: $z^{\star} = 1.645$ for 90%, $2.576$ for 99%.
+The quantile of the $t$ distribution that leaves 2.5% in each tail for a 95% interval: `scipy.stats.t.ppf(0.975, df=n-1)`. Degrees of freedom are $df = n - 1$. The $t$ distribution has fatter tails than the normal to account for estimating $\sigma$ by $s$, so $t^{\star}$ is larger for small samples (2.26 at $n = 10$, 2.05 at $n = 30$) and approaches the normal value $z^{\star} = 1.96$ as $n$ grows. Use it whenever $\sigma$ is estimated, which is almost always; software does.
+
+## .zcrit
+
+Normal critical value $z^{\star}$.
+
+Pronounced: "z star".
+
+The quantile of the standard normal distribution that leaves 2.5% in each tail: $z^{\star} = 1.96$ for a 95% interval (`scipy.stats.norm.ppf(0.975)`). Other levels: 1.645 for 90%, 2.576 for 99%. The rule of thumb "mean plus or minus two standard errors" rounds 1.96 up to 2.
+
+Justified by the central limit theorem: for large $n$ the sample mean is approximately normal, and $s$ is close enough to $\sigma$ that the $t$ and normal quantiles agree (at $n = 100$, $t^{\star} = 1.98$). For small samples $z^{\star}$ gives intervals that are too narrow, covering $\mu$ less often than promised.
 
 ## .sd
 
