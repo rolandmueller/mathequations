@@ -34,9 +34,9 @@ $F$ is the set of all features. There are $2^{|F|-1}$ subsets, which is why exac
 
 Shapley weight.
 
-Pronounced: "S factorial times F minus S minus one factorial, over F factorial". $|S|$ is "the size of S".
+Pronounced: "S factorial times F minus S minus one factorial, over F factorial". $|S|$ is "the size of S": the number of features in the coalition. $|F|$ is "the size of F": the total number of features in the model, e.g. $|F| = 4$ for a model with four inputs.
 
-The fraction of all orderings of the features in which exactly the features in $S$ come before $j$. Averaging over orderings is what makes the attribution fair (symmetric, efficient, and zero for features that never matter).
+The fraction of all orderings of the features in which exactly the features in $S$ come before $j$. Of the $|F|!$ possible orderings of all features, $|S|!\,(|F| - |S| - 1)!$ have the $|S|$ features of $S$ first (in any order), then $j$, then the remaining $|F| - |S| - 1$ features (in any order). Averaging over orderings is what makes the attribution fair (symmetric, efficient, and zero for features that never matter).
 
 ## .with
 
