@@ -8,7 +8,7 @@ $$
 
 ## Description
 
-The same recipe as for one mean, point estimate plus or minus t star times SE, applied to a difference. The [interval]{.ci} is centered on the observed difference between the [mean of group 1]{.mean1} and the [mean of group 2]{.mean2}. Its half-width is a [critical value]{.crit} times the [standard error of the difference]{.se}, which adds up the uncertainty of both group means.
+The same recipe as for one mean, point estimate plus or minus t star times standard error, applied to a difference. The [interval]{.ci} is centered on the observed difference between the [mean of group 1]{.mean1} and the [mean of group 2]{.mean2}. Its half-width is a [critical value]{.crit} times the [standard error of the difference]{.se}, which adds up the uncertainty of both group means.
 
 Read aloud: [the confidence interval]{.ci} is [x bar one]{.mean1} minus [x bar two]{.mean2}, plus or minus [t star with df degrees of freedom]{.crit} times [the square root of s one squared over n one plus s two squared over n two]{.se}.
 

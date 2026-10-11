@@ -8,7 +8,7 @@ $$
 
 ## Description
 
-A [z-score]{.zscore} tells you how unusual an [observation]{.value} is: its distance from the [mean]{.mean}, expressed in units of [standard deviations]{.sd}. Standardized variables have mean 0 and SD 1, which makes values on different scales comparable.
+A [z-score]{.zscore} tells you how unusual an [observation]{.value} is: its distance from the [mean]{.mean}, expressed in units of [standard deviations]{.sd}. Standardized variables have mean 0 and standard deviation 1, which makes values on different scales comparable.
 
 Read aloud: [z sub i]{.zscore} equals [x sub i]{.value} minus [x bar]{.mean}, over [s]{.sd}.
 

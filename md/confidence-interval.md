@@ -11,7 +11,7 @@ $$
 
 ## Description
 
-A [confidence interval]{.ci} puts a margin of error around the [sample mean]{.mean}. The margin is a [critical value from the t distribution]{.crit} times the standard error: the [spread of the data]{.sd} divided by the [square root of the sample size]{.root}. For large samples the t distribution is practically normal, so the [normal critical value]{.zcrit}, 1.96 for a 95% interval, can be used instead. In words: point estimate plus or minus critical value times SE.
+A [confidence interval]{.ci} puts a margin of error around the [sample mean]{.mean}. The margin is a [critical value from the t distribution]{.crit} times the standard error: the [spread of the data]{.sd} divided by the [square root of the sample size]{.root}. For large samples the t distribution is practically normal, so the [normal critical value]{.zcrit}, 1.96 for a 95% interval, can be used instead. In words: point estimate plus or minus critical value times standard error.
 
 Read aloud: [the confidence interval]{.ci} is [x bar]{.mean} plus or minus [t star with n minus one degrees of freedom]{.crit} times [s]{.sd} over [the square root of n]{.root}. For large n, it is approximately [x bar]{.mean} plus or minus [z star]{.zcrit} times [s]{.sd} over [the square root of n]{.root}.
 

@@ -8,7 +8,7 @@ $$
 
 ## Description
 
-Is there any relationship between X and Y at all? The [t-statistic]{.t} measures how many standard errors the [estimated slope]{.b1} lies away from [zero]{.null}, the value it would have if X had no association with Y. The [standard error]{.se} sets the scale: a slope of 0.5 is impressive if its SE is 0.05 and meaningless if it is 1.
+Is there any relationship between X and Y at all? The [t-statistic]{.t} measures how many standard errors the [estimated slope]{.b1} lies away from [zero]{.null}, the value it would have if X had no association with Y. The [standard error]{.se} sets the scale: a slope of 0.5 is impressive if its standard error is 0.05 and meaningless if it is 1.
 
 Read aloud: [t]{.t} equals [beta one hat]{.b1} minus [zero]{.null}, over [the standard error of beta one hat]{.se}.
 
