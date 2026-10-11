@@ -3,14 +3,14 @@
 ## Equation
 
 $$
-\mark[out]{\mathbf{a}^{(l)}} = \mark[act]{\sigma}\big( \mark[w]{W^{(l)}} \, \mark[in]{\mathbf{a}^{(l-1)}} + \mark[b]{\mathbf{b}^{(l)}} \big)
+\mark[out]{\mathbf{a}^{(l)}} = \mark[act]{g}\big( \mark[w]{W^{(l)}} \, \mark[in]{\mathbf{a}^{(l-1)}} + \mark[b]{\mathbf{b}^{(l)}} \big)
 $$
 
 ## Description
 
 A neural network computes its output layer by layer. Each layer takes the [outputs of the previous layer]{.in}, multiplies them by a [weight matrix]{.w}, adds a [bias vector]{.b}, and passes every entry through the [activation function]{.act}. The result is the [layer's output]{.out}, which feeds the next layer. One matrix multiplication handles all neurons of a layer at once.
 
-Read aloud: [a l]{.out} equals [sigma]{.act} of [W l]{.w} times [a l minus one]{.in} plus [b l]{.b}.
+Read aloud: [a l]{.out} equals [g]{.act} of [W l]{.w} times [a l minus one]{.in} plus [b l]{.b}.
 
 ## .out
 
@@ -22,11 +22,13 @@ A vector with one entry per node. The last layer's activations are the network's
 
 ## .act
 
-Activation function $\sigma$.
+Activation function $g$.
 
-Pronounced: "sigma".
+Pronounced: "g".
 
-Applied entry by entry. The sigmoid $\sigma(z) = \frac{1}{1 + e^{-z}}$ squashes values into $(0, 1)$, like a soft threshold; ReLU is the modern default in hidden layers. Without it, all layers together would collapse into one linear map.
+A placeholder for whichever activation the layer uses, and layers can use different ones: typically ReLU, $\max(0, z)$, in hidden layers, and sigmoid or softmax in the output layer, depending on the task (see the Activation Functions page). ReLU and sigmoid are applied entry by entry; softmax uses the whole vector at once. Many hand-built networks use the sigmoid $\sigma(z) = \frac{1}{1 + e^{-z}}$ everywhere, so this equation is often written with $\sigma$ in place of $g$.
+
+Without an activation, all layers together would collapse into one linear map.
 
 ## .w
 
