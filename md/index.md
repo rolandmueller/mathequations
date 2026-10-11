@@ -119,6 +119,7 @@ The core formulas of statistics and machine learning, in the order of the Data S
 ## Weeks 14–15 · Neural networks
 
 - neuron.md
+- activation-functions.md
 - forward-propagation.md
 - gradient-descent.md
 - backpropagation.md

@@ -26,7 +26,7 @@ Activation function $g$.
 
 Pronounced: "g".
 
-Without it, stacked layers would collapse into one linear model. Common choices: ReLU $g(z) = \max(0, z)$, the default for hidden layers; sigmoid $\frac{1}{1 + e^{-z}}$; and softmax at the output for classification. In keras: `Dense(64, activation="relu")`.
+Without it, stacked layers would collapse into one linear model. See the Activation Functions page for the formulas. Common choices: ReLU $g(z) = \max(0, z)$, the default for hidden layers; sigmoid $\frac{1}{1 + e^{-z}}$; and softmax at the output for classification. In keras: `Dense(64, activation="relu")`.
 
 ## .bias
 
