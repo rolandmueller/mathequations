@@ -83,11 +83,18 @@
     }
 
     /* KaTeX overlays that would swallow hovers on marked terms:
-       the radical is a 400em-wide SVG drawn over the radicand, and the empty
-       depth row of a vertical list (fractions, sums, aligned) covers the lower half */
+       the radical is a 400em-wide SVG drawn over the radicand, the empty
+       depth row of a vertical list (fractions, sums, aligned) covers the
+       lower half, and each row of a vertical list sits in a wrapper whose
+       tall invisible strut can reach over the content above it */
     .katex .hide-tail,
-    .katex .vlist-t2 > .vlist-r:last-child {
+    .katex .vlist-t2 > .vlist-r:last-child,
+    .katex .vlist > span {
       pointer-events: none;
+    }
+
+    .katex .vlist > span > :not(.pstrut):not(.hide-tail) {
+      pointer-events: auto;
     }
 
     /* Interactive term effects */

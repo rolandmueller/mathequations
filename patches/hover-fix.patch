@@ -1,77 +1,58 @@
-From 3e4639882be5b46c2ea4ea2c5a73855e78857831 Mon Sep 17 00:00:00 2001
-From: Roland Mueller <roland.m.mueller@googlemail.com>
-Date: Sat, 10 Oct 2026 14:16:42 +0200
-Subject: [PATCH] Make terms under roots and in fractions respond to hover
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-Marked terms ignore hover and click when they sit under a square root,
-in the denominator of a fraction, or in a lower row of an aligned block.
-The equation looks fine, so the bug is easy to miss: in the bundled
-examples it affects 7 terms in Maxwell's equations, P(E) in Bayes'
-theorem, Z and T in the grand canonical ensemble, and ħ in the path
-integral.
-
-The cause is two invisible layout elements that KaTeX places on top of
-the visible math, so they receive the mouse events instead:
-
-- \sqrt draws the radical sign as a 400em-wide SVG (.hide-tail) that is
-  clipped to size but still covers the whole expression under the root.
-- Every vertical list (.vlist-t2: fractions, sums with limits, aligned
-  rows) ends with an empty row that only reserves space below the
-  baseline. It is position: relative and comes last in the DOM, so it is
-  painted over the lower part of the list.
-
-Neither element contains anything clickable, so pointer-events: none
-on them changes nothing visually and lets events reach the terms below.
-The rule goes in both places that render equations: the live view
-(EquationDisplay.vue) and the standalone HTML export (htmlExport.ts).
-
-Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
----
- src/components/equation/EquationDisplay.vue | 8 ++++++++
- src/export/htmlExport.ts                    | 8 ++++++++
- 2 files changed, 16 insertions(+)
+Hover fix for marked terms covered by KaTeX layout elements (radical SVG,
+depth rows and row wrappers of vertical lists). Combined diff of the
+hover-fix branch of https://github.com/rolandmueller/equations-explained-colorfully
+(PR: https://github.com/stared/equations-explained-colorfully/pull/4),
+applied on top of upstream 19acd52 by `just install`.
 
 diff --git a/src/components/equation/EquationDisplay.vue b/src/components/equation/EquationDisplay.vue
-index e0b5a16..c70ee15 100644
+index e0b5a16..733fcc8 100644
 --- a/src/components/equation/EquationDisplay.vue
 +++ b/src/components/equation/EquationDisplay.vue
-@@ -189,6 +189,14 @@ onUnmounted(() => resizeObserver?.disconnect());
+@@ -189,6 +189,21 @@ onUnmounted(() => resizeObserver?.disconnect());
    margin: 0;
  }
  
 +/* KaTeX overlays that would swallow hovers on marked terms:
-+   the radical is a 400em-wide SVG drawn over the radicand, and the empty
-+   depth row of a vertical list (fractions, sums, aligned) covers the lower half */
++   the radical is a 400em-wide SVG drawn over the radicand, the empty
++   depth row of a vertical list (fractions, sums, aligned) covers the
++   lower half, and each row of a vertical list sits in a wrapper whose
++   tall invisible strut can reach over the content above it */
 +#equation-container :deep(.hide-tail),
-+#equation-container :deep(.vlist-t2 > .vlist-r:last-child) {
++#equation-container :deep(.vlist-t2 > .vlist-r:last-child),
++#equation-container :deep(.vlist > span) {
 +  pointer-events: none;
++}
++
++#equation-container :deep(.vlist > span > :not(.pstrut):not(.hide-tail)) {
++  pointer-events: auto;
 +}
 +
  .selection-overlay {
    position: absolute;
    top: 0;
 diff --git a/src/export/htmlExport.ts b/src/export/htmlExport.ts
-index 2e54871..42bb639 100644
+index 2e54871..fecf44f 100644
 --- a/src/export/htmlExport.ts
 +++ b/src/export/htmlExport.ts
-@@ -185,6 +185,14 @@ export function exportToHTML(
+@@ -185,6 +185,21 @@ export function exportToHTML(
        font-weight: 600;
      }
  
 +    /* KaTeX overlays that would swallow hovers on marked terms:
-+       the radical is a 400em-wide SVG drawn over the radicand, and the empty
-+       depth row of a vertical list (fractions, sums, aligned) covers the lower half */
++       the radical is a 400em-wide SVG drawn over the radicand, the empty
++       depth row of a vertical list (fractions, sums, aligned) covers the
++       lower half, and each row of a vertical list sits in a wrapper whose
++       tall invisible strut can reach over the content above it */
 +    .katex .hide-tail,
-+    .katex .vlist-t2 > .vlist-r:last-child {
++    .katex .vlist-t2 > .vlist-r:last-child,
++    .katex .vlist > span {
 +      pointer-events: none;
++    }
++
++    .katex .vlist > span > :not(.pstrut):not(.hide-tail) {
++      pointer-events: auto;
 +    }
 +
      /* Interactive term effects */
      [class*="term-"] {
        transition: opacity 0.2s ease;
--- 
-2.53.0
-
