@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mean Absolute Error</title>
+
+  <!-- KaTeX CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css" crossorigin="anonymous">
+
+  <style>
+    :root {
+      --bg-color: #ffffff;
+      --text-color: #1f2937;
+      --border-color: #d1d5db;
+      /* Color definitions */
+      --term-mae: #8b5cf6;
+      --term-norm: #10b981;
+      --term-sum: #ec4899;
+      --term-abs: #3b82f6;
+      --term-y: #ef4444;
+      --term-pred: #06b6d4;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'ETBembo', Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      margin: 0;
+      padding: 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 400;
+      color: var(--text-color);
+      margin-bottom: 2rem;
+    }
+
+    .equation-container {
+      padding: 2rem 0;
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .equation-container .katex {
+      font-size: 1.6rem;
+    }
+
+    .description {
+      border-top: 1px solid var(--border-color);
+      padding-top: 1.5rem;
+      margin-bottom: 2rem;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .description p + p {
+      margin-top: 1.25rem;
+    }
+
+    .description a {
+      color: #4b5563;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.18em;
+    }
+
+    .description a:hover,
+    .description a:focus-visible {
+      color: #2563eb;
+    }
+
+    .description span {
+      font-weight: 600;
+    }
+
+    /* KaTeX overlays that would swallow hovers on marked terms:
+       the radical is a 400em-wide SVG drawn over the radicand, and the empty
+       depth row of a vertical list (fractions, sums, aligned) covers the lower half */
+    .katex .hide-tail,
+    .katex .vlist-t2 > .vlist-r:last-child {
+      pointer-events: none;
+    }
+
+    /* Interactive term effects */
+    [class*="term-"] {
+      transition: opacity 0.2s ease;
+      cursor: pointer;
+    }
+
+    [class*="term-"]:hover,
+    .term-active {
+      opacity: 0.6;
+    }
+
+    .term-clicked {
+      opacity: 0.6;
+      outline: 2px solid currentColor;
+      outline-offset: 2px;
+    }
+
+    /* Hover explanation */
+    .hover-explanation {
+      border-top: 1px solid var(--border-color);
+      padding-top: 1rem;
+      margin-top: 1rem;
+      min-height: 3rem;
+      opacity: 0;
+      pointer-events: none;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--text-color);
+    }
+
+    .hover-explanation.visible {
+      opacity: 1;
+    }
+
+    .definitions {
+      display: none; /* Hidden - definitions only show on hover */
+    }
+
+    .footer {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.875rem;
+      color: #6b7280;
+      text-align: center;
+    }
+
+    /* Term color styles */
+    .term-mae { color: var(--term-mae); }
+    .term-norm { color: var(--term-norm); }
+    .term-sum { color: var(--term-sum); }
+    .term-abs { color: var(--term-abs); }
+    .term-y { color: var(--term-y); }
+    .term-pred { color: var(--term-pred); }
+
+    @media print {
+      body {
+        max-width: 100%;
+      }
+    }
+  
+    .eq-nav { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .eq-nav a { color: #6b7280; text-decoration: none; }
+    .eq-nav a:hover { color: #2563eb; }
+  </style>
+</head>
+<body>
+  <nav class="eq-nav">
+    <a href="mse.html">← Mean Squared Error</a>
+    <a href="index.html">All equations</a>
+    <a href="bias-variance.html">Bias–Variance Decomposition →</a>
+  </nav>
+  <h1>Mean Absolute Error</h1>
+
+  <div class="equation-container">
+    <span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mstyle mathcolor="#8b5cf6"><mrow><mi mathvariant="normal">M</mi><mi mathvariant="normal">A</mi><mi mathvariant="normal">E</mi></mrow></mstyle><mo>=</mo><mstyle mathcolor="#10b981"><mfrac><mn>1</mn><mi>n</mi></mfrac></mstyle><mstyle mathcolor="#ec4899"><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover></mstyle><mstyle mathcolor="#3b82f6"><mo fence="false" stretchy="true" minsize="1.2em" maxsize="1.2em">∣</mo></mstyle><mtext> </mtext><mstyle mathcolor="#ef4444"><msub><mi>y</mi><mi>i</mi></msub></mstyle><mo>−</mo><mstyle mathcolor="#06b6d4"><mover accent="true"><mi>f</mi><mo>^</mo></mover><mo stretchy="false">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo stretchy="false">)</mo></mstyle><mtext> </mtext><mstyle mathcolor="#3b82f6"><mo fence="false" stretchy="true" minsize="1.2em" maxsize="1.2em">∣</mo></mstyle></mrow><annotation encoding="application/x-tex">\htmlClass{term-mae}{\textcolor{#8b5cf6}{\mathrm{MAE}}} = \htmlClass{term-norm}{\textcolor{#10b981}{\frac{1}{n}}} \htmlClass{term-sum}{\textcolor{#ec4899}{\sum_{i=1}^{n}}} \htmlClass{term-abs}{\textcolor{#3b82f6}{\big|}} \, \htmlClass{term-y}{\textcolor{#ef4444}{y_i}} - \htmlClass{term-pred}{\textcolor{#06b6d4}{\hat{f}(x_i)}} \, \htmlClass{term-abs}{\textcolor{#3b82f6}{\big|}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="enclosing term-mae"><span class="mord" style="color:#8b5cf6;"><span class="mord mathrm" style="color:#8b5cf6;">MAE</span></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.9291em;vertical-align:-1.2777em;"></span><span class="enclosing term-norm"><span class="mord" style="color:#10b981;"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="color:#10b981;"><span class="mord mathnormal" style="color:#10b981;">n</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="color:#10b981;border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="color:#10b981;"><span class="mord" style="color:#10b981;">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.1667em;"></span></span><span class="enclosing term-sum"><span class="mop op-limits" style="color:#ec4899;"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.6514em;"><span style="top:-1.8723em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight" style="color:#ec4899;"><span class="mord mtight" style="color:#ec4899;"><span class="mord mathnormal mtight" style="color:#ec4899;">i</span><span class="mrel mtight" style="color:#ec4899;">=</span><span class="mord mtight" style="color:#ec4899;">1</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op" style="color:#ec4899;">∑</span></span></span><span style="top:-4.3em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight" style="color:#ec4899;"><span class="mord mtight" style="color:#ec4899;"><span class="mord mathnormal mtight" style="color:#ec4899;">n</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.2777em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span></span><span class="enclosing term-abs"><span class="mord" style="color:#3b82f6;"><span class="delimsizing mult" style="color:#3b82f6;"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.85em;"><span style="top:-2.85em;"><span class="pstrut" style="height:3.2em;"></span><span style="color:#3b82f6;width:0.333em;height:1.200em;"><svg xmlns="http://www.w3.org/2000/svg" width="0.333em" height="1.200em" viewBox="0 0 333 1200"><path d="M145 15 v585 v0 v585 c2.667,10,9.667,15,21,15
+c10,0,16.667,-5,20,-15 v-585 v0 v-585 c-2.667,-10,-9.667,-15,-21,-15
+c-10,0,-16.667,5,-20,15z M188 15 H145 v585 v0 v585 h43z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.35em;"><span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="enclosing term-y"><span class="mord" style="color:#ef4444;"><span class="mord mathnormal" style="margin-right:0.03588em;color:#ef4444;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight" style="color:#ef4444;"><span class="mord mathnormal mtight" style="color:#ef4444;">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.3079em;vertical-align:-0.35em;"></span><span class="enclosing term-pred"><span class="mord accent" style="color:#06b6d4;"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9579em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;color:#06b6d4;">f</span></span><span style="top:-3.2634em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.0833em;"><span class="mord" style="color:#06b6d4;">^</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1944em;"><span></span></span></span></span></span><span class="mopen" style="color:#06b6d4;">(</span><span class="mord" style="color:#06b6d4;"><span class="mord mathnormal" style="color:#06b6d4;">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight" style="color:#06b6d4;"><span class="mord mathnormal mtight" style="color:#06b6d4;">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose" style="color:#06b6d4;">)</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="enclosing term-abs"><span class="mord" style="color:#3b82f6;"><span class="delimsizing mult" style="color:#3b82f6;"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.85em;"><span style="top:-2.85em;"><span class="pstrut" style="height:3.2em;"></span><span style="color:#3b82f6;width:0.333em;height:1.200em;"><svg xmlns="http://www.w3.org/2000/svg" width="0.333em" height="1.200em" viewBox="0 0 333 1200"><path d="M145 15 v585 v0 v585 c2.667,10,9.667,15,21,15
+c10,0,16.667,-5,20,-15 v-585 v0 v-585 c-2.667,-10,-9.667,-15,-21,-15
+c-10,0,-16.667,5,-20,15z M188 15 H145 v585 v0 v585 h43z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.35em;"><span></span></span></span></span></span></span></span></span></span></span></span>
+  </div>
+
+  <div class="description">
+    <p>The <span class="term-mae" style="color: var(--term-mae); font-weight: 600;">mean absolute error</span> is the <span class="term-norm" style="color: var(--term-norm); font-weight: 600;">average</span> over <span class="term-sum" style="color: var(--term-sum); font-weight: 600;">all observations</span> of how far the <span class="term-pred" style="color: var(--term-pred); font-weight: 600;">model's prediction</span> misses the <span class="term-y" style="color: var(--term-y); font-weight: 600;">true response</span>, <span class="term-abs" style="color: var(--term-abs); font-weight: 600;">ignoring the sign</span>. Unlike the mean squared error it does not square the misses, so it is in the unit of the response and a single large miss does not dominate it.</p>
+<p>Read aloud: <span class="term-mae" style="color: var(--term-mae); font-weight: 600;">M A E</span> equals <span class="term-norm" style="color: var(--term-norm); font-weight: 600;">one over n</span> times <span class="term-sum" style="color: var(--term-sum); font-weight: 600;">the sum from i equals one to n</span> of <span class="term-abs" style="color: var(--term-abs); font-weight: 600;">the absolute value of</span> <span class="term-y" style="color: var(--term-y); font-weight: 600;">y sub i</span> minus <span class="term-pred" style="color: var(--term-pred); font-weight: 600;">f hat of x sub i</span>.</p>
+  </div>
+
+  <div id="hover-explanation" class="hover-explanation"></div>
+
+  <div class="definitions">
+    <h2 style="font-size: 1.25rem; font-weight: 400; margin-bottom: 1.5rem;">Definitions</h2>
+    
+    <div class="definition">
+      <h3 style="color: var(--term-mae);">mae</h3>
+      <p>Mean absolute error <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">M</mi><mi mathvariant="normal">A</mi><mi mathvariant="normal">E</mi></mrow><annotation encoding="application/x-tex">\mathrm{MAE}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord"><span class="mord mathrm">MAE</span></span></span></span></span>.
+Pronounced: &quot;M A E&quot;.
+Directly interpretable: an MAE of 3.2 means predictions are off by 3.2 units on average. Always <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">M</mi><mi mathvariant="normal">A</mi><mi mathvariant="normal">E</mi></mrow><mo>≤</mo><mrow><mi mathvariant="normal">R</mi><mi mathvariant="normal">M</mi><mi mathvariant="normal">S</mi><mi mathvariant="normal">E</mi></mrow></mrow><annotation encoding="application/x-tex">\mathrm{MAE} \le \mathrm{RMSE}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8193em;vertical-align:-0.136em;"></span><span class="mord"><span class="mord mathrm">MAE</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord"><span class="mord mathrm">RMSE</span></span></span></span></span>; a large gap between the two signals a few large errors. <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="monospace">sklearn.metrics.mean_absolute_error</mtext></mrow><annotation encoding="application/x-tex">\texttt{sklearn.metrics.mean\_absolute\_error}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7063em;vertical-align:-0.0951em;"></span><span class="mord text"><span class="mord texttt">sklearn.metrics.mean_absolute_error</span></span></span></span></span>; in keras <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="monospace">loss=&quot;mae&quot;</mtext></mrow><annotation encoding="application/x-tex">\texttt{loss=&quot;mae&quot;}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6111em;"></span><span class="mord text"><span class="mord texttt">loss=&quot;mae&quot;</span></span></span></span></span> or <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="monospace">metrics=[&quot;mae&quot;]</mtext></mrow><annotation encoding="application/x-tex">\texttt{metrics=[&quot;mae&quot;]}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7778em;vertical-align:-0.0833em;"></span><span class="mord text"><span class="mord texttt">metrics=[&quot;mae&quot;]</span></span></span></span></span>.
+MSE vs. MAE as a loss: minimizing MSE predicts the conditional mean, minimizing MAE the conditional median. Choose MAE when outliers should not dominate, MSE when large errors are disproportionately costly. Like MSE, it only estimates the test error when computed on data not used for fitting.</p>
+    </div>
+
+    <div class="definition">
+      <h3 style="color: var(--term-norm);">norm</h3>
+      <p>Normalization <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mn>1</mn><mi>n</mi></mfrac></mrow><annotation encoding="application/x-tex">\frac{1}{n}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1901em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8451em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span>.
+Pronounced: &quot;one over n&quot;.
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> is the number of observations being evaluated: the training set or the test set.</p>
+    </div>
+
+    <div class="definition">
+      <h3 style="color: var(--term-sum);">sum</h3>
+      <p>Summation <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></msubsup></mrow><annotation encoding="application/x-tex">\sum_{i=1}^{n}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.104em;vertical-align:-0.2997em;"></span><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8043em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2997em;"><span></span></span></span></span></span></span></span></span></span>.
+Pronounced: &quot;the sum from i equals one to n&quot;.</p>
+    </div>
+
+    <div class="definition">
+      <h3 style="color: var(--term-abs);">abs</h3>
+      <p>Absolute value <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mo>⋅</mo><mi mathvariant="normal">∣</mi></mrow><annotation encoding="application/x-tex">|\cdot|</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span></span></span></span>.
+Pronounced: &quot;the absolute value of&quot;.
+Drops the sign, so misses above and below count equally and cannot cancel. Its kink at zero makes the loss non-differentiable there; gradient-based training uses a subgradient, or the smooth Huber loss, which is squared for small misses and absolute for large ones.</p>
+    </div>
+
+    <div class="definition">
+      <h3 style="color: var(--term-y);">y</h3>
+      <p>Observed response <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">y_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>.
+Pronounced: &quot;y sub i&quot;.</p>
+    </div>
+
+    <div class="definition">
+      <h3 style="color: var(--term-pred);">pred</h3>
+      <p>Prediction <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover accent="true"><mi>f</mi><mo>^</mo></mover><mo stretchy="false">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\hat{f}(x_i)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.2079em;vertical-align:-0.25em;"></span><span class="mord accent"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9579em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span></span><span style="top:-3.2634em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.0833em;"><span class="mord">^</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1944em;"><span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>.
+Pronounced: &quot;f hat of x sub i&quot;.
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover accent="true"><mi>f</mi><mo>^</mo></mover></mrow><annotation encoding="application/x-tex">\hat{f}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1523em;vertical-align:-0.1944em;"></span><span class="mord accent"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9579em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span></span><span style="top:-3.2634em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.0833em;"><span class="mord">^</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1944em;"><span></span></span></span></span></span></span></span></span> is the fitted model.</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Created with <a href="https://github.com/stared/equations-explained-colorfully" target="_blank">Equations Explained Colorfully</a></p>
+  </div>
+
+  <script>
+    // Interactive hover functionality
+    (function() {
+      const hoverDiv = document.getElementById('hover-explanation');
+      // Definitions with pre-rendered inline math
+      const definitions = {"mae":"Mean absolute error <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">M</mi><mi mathvariant=\"normal\">A</mi><mi mathvariant=\"normal\">E</mi></mrow><annotation encoding=\"application/x-tex\">\\mathrm{MAE}</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:0.6833em;\"></span><span class=\"mord\"><span class=\"mord mathrm\">MAE</span></span></span></span></span>.\nPronounced: &quot;M A E&quot;.\nDirectly interpretable: an MAE of 3.2 means predictions are off by 3.2 units on average. Always <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mrow><mi mathvariant=\"normal\">M</mi><mi mathvariant=\"normal\">A</mi><mi mathvariant=\"normal\">E</mi></mrow><mo>≤</mo><mrow><mi mathvariant=\"normal\">R</mi><mi mathvariant=\"normal\">M</mi><mi mathvariant=\"normal\">S</mi><mi mathvariant=\"normal\">E</mi></mrow></mrow><annotation encoding=\"application/x-tex\">\\mathrm{MAE} \\le \\mathrm{RMSE}</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:0.8193em;vertical-align:-0.136em;\"></span><span class=\"mord\"><span class=\"mord mathrm\">MAE</span></span><span class=\"mspace\" style=\"margin-right:0.2778em;\"></span><span class=\"mrel\">≤</span><span class=\"mspace\" style=\"margin-right:0.2778em;\"></span></span><span class=\"base\"><span class=\"strut\" style=\"height:0.6833em;\"></span><span class=\"mord\"><span class=\"mord mathrm\">RMSE</span></span></span></span></span>; a large gap between the two signals a few large errors. <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mtext mathvariant=\"monospace\">sklearn.metrics.mean_absolute_error</mtext></mrow><annotation encoding=\"application/x-tex\">\\texttt{sklearn.metrics.mean\\_absolute\\_error}</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:0.7063em;vertical-align:-0.0951em;\"></span><span class=\"mord text\"><span class=\"mord texttt\">sklearn.metrics.mean_absolute_error</span></span></span></span></span>; in keras <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mtext mathvariant=\"monospace\">loss=&quot;mae&quot;</mtext></mrow><annotation encoding=\"application/x-tex\">\\texttt{loss=&quot;mae&quot;}</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:0.6111em;\"></span><span class=\"mord text\"><span class=\"mord texttt\">loss=&quot;mae&quot;</span></span></span></span></span> or <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mtext mathvariant=\"monospace\">metrics=[&quot;mae&quot;]</mtext></mrow><annotation encoding=\"application/x-tex\">\\texttt{metrics=[&quot;mae&quot;]}</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:0.7778em;vertical-align:-0.0833em;\"></span><span class=\"mord text\"><span class=\"mord texttt\">metrics=[&quot;mae&quot;]</span></span></span></span></span>.\nMSE vs. MAE as a loss: minimizing MSE predicts the conditional mean, minimizing MAE the conditional median. Choose MAE when outliers should not dominate, MSE when large errors are disproportionately costly. Like MSE, it only estimates the test error when computed on data not used for fitting.","norm":"Normalization <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mfrac><mn>1</mn><mi>n</mi></mfrac></mrow><annotation encoding=\"application/x-tex\">\\frac{1}{n}</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:1.1901em;vertical-align:-0.345em;\"></span><span class=\"mord\"><span class=\"mopen nulldelimiter\"></span><span class=\"mfrac\"><span class=\"vlist-t vlist-t2\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.8451em;\"><span style=\"top:-2.655em;\"><span class=\"pstrut\" style=\"height:3em;\"></span><span class=\"sizing reset-size6 size3 mtight\"><span class=\"mord mtight\"><span class=\"mord mathnormal mtight\">n</span></span></span></span><span style=\"top:-3.23em;\"><span class=\"pstrut\" style=\"height:3em;\"></span><span class=\"frac-line\" style=\"border-bottom-width:0.04em;\"></span></span><span style=\"top:-3.394em;\"><span class=\"pstrut\" style=\"height:3em;\"></span><span class=\"sizing reset-size6 size3 mtight\"><span class=\"mord mtight\"><span class=\"mord mtight\">1</span></span></span></span></span><span class=\"vlist-s\">​</span></span><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.345em;\"><span></span></span></span></span></span><span class=\"mclose nulldelimiter\"></span></span></span></span></span>.\nPronounced: &quot;one over n&quot;.\n<span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">n</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:0.4306em;\"></span><span class=\"mord mathnormal\">n</span></span></span></span> is the number of observations being evaluated: the training set or the test set.","sum":"Summation <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msubsup><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></msubsup></mrow><annotation encoding=\"application/x-tex\">\\sum_{i=1}^{n}</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:1.104em;vertical-align:-0.2997em;\"></span><span class=\"mop\"><span class=\"mop op-symbol small-op\" style=\"position:relative;top:0em;\">∑</span><span class=\"msupsub\"><span class=\"vlist-t vlist-t2\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.8043em;\"><span style=\"top:-2.4003em;margin-left:0em;margin-right:0.05em;\"><span class=\"pstrut\" style=\"height:2.7em;\"></span><span class=\"sizing reset-size6 size3 mtight\"><span class=\"mord mtight\"><span class=\"mord mathnormal mtight\">i</span><span class=\"mrel mtight\">=</span><span class=\"mord mtight\">1</span></span></span></span><span style=\"top:-3.2029em;margin-right:0.05em;\"><span class=\"pstrut\" style=\"height:2.7em;\"></span><span class=\"sizing reset-size6 size3 mtight\"><span class=\"mord mtight\"><span class=\"mord mathnormal mtight\">n</span></span></span></span></span><span class=\"vlist-s\">​</span></span><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.2997em;\"><span></span></span></span></span></span></span></span></span></span>.\nPronounced: &quot;the sum from i equals one to n&quot;.","abs":"Absolute value <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><mo>⋅</mo><mi mathvariant=\"normal\">∣</mi></mrow><annotation encoding=\"application/x-tex\">|\\cdot|</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:1em;vertical-align:-0.25em;\"></span><span class=\"mord\">∣</span><span class=\"mspace\" style=\"margin-right:0.2222em;\"></span><span class=\"mbin\">⋅</span><span class=\"mspace\" style=\"margin-right:0.2222em;\"></span></span><span class=\"base\"><span class=\"strut\" style=\"height:1em;vertical-align:-0.25em;\"></span><span class=\"mord\">∣</span></span></span></span>.\nPronounced: &quot;the absolute value of&quot;.\nDrops the sign, so misses above and below count equally and cannot cancel. Its kink at zero makes the loss non-differentiable there; gradient-based training uses a subgradient, or the smooth Huber loss, which is squared for small misses and absolute for large ones.","y":"Observed response <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>y</mi><mi>i</mi></msub></mrow><annotation encoding=\"application/x-tex\">y_i</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:0.625em;vertical-align:-0.1944em;\"></span><span class=\"mord\"><span class=\"mord mathnormal\" style=\"margin-right:0.03588em;\">y</span><span class=\"msupsub\"><span class=\"vlist-t vlist-t2\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.3117em;\"><span style=\"top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;\"><span class=\"pstrut\" style=\"height:2.7em;\"></span><span class=\"sizing reset-size6 size3 mtight\"><span class=\"mord mathnormal mtight\">i</span></span></span></span><span class=\"vlist-s\">​</span></span><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.15em;\"><span></span></span></span></span></span></span></span></span></span>.\nPronounced: &quot;y sub i&quot;.","pred":"Prediction <span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mover accent=\"true\"><mi>f</mi><mo>^</mo></mover><mo stretchy=\"false\">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\hat{f}(x_i)</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:1.2079em;vertical-align:-0.25em;\"></span><span class=\"mord accent\"><span class=\"vlist-t vlist-t2\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.9579em;\"><span style=\"top:-3em;\"><span class=\"pstrut\" style=\"height:3em;\"></span><span class=\"mord mathnormal\" style=\"margin-right:0.10764em;\">f</span></span><span style=\"top:-3.2634em;\"><span class=\"pstrut\" style=\"height:3em;\"></span><span class=\"accent-body\" style=\"left:-0.0833em;\"><span class=\"mord\">^</span></span></span></span><span class=\"vlist-s\">​</span></span><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.1944em;\"><span></span></span></span></span></span><span class=\"mopen\">(</span><span class=\"mord\"><span class=\"mord mathnormal\">x</span><span class=\"msupsub\"><span class=\"vlist-t vlist-t2\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.3117em;\"><span style=\"top:-2.55em;margin-left:0em;margin-right:0.05em;\"><span class=\"pstrut\" style=\"height:2.7em;\"></span><span class=\"sizing reset-size6 size3 mtight\"><span class=\"mord mathnormal mtight\">i</span></span></span></span><span class=\"vlist-s\">​</span></span><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.15em;\"><span></span></span></span></span></span></span><span class=\"mclose\">)</span></span></span></span>.\nPronounced: &quot;f hat of x sub i&quot;.\n<span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mover accent=\"true\"><mi>f</mi><mo>^</mo></mover></mrow><annotation encoding=\"application/x-tex\">\\hat{f}</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:1.1523em;vertical-align:-0.1944em;\"></span><span class=\"mord accent\"><span class=\"vlist-t vlist-t2\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.9579em;\"><span style=\"top:-3em;\"><span class=\"pstrut\" style=\"height:3em;\"></span><span class=\"mord mathnormal\" style=\"margin-right:0.10764em;\">f</span></span><span style=\"top:-3.2634em;\"><span class=\"pstrut\" style=\"height:3em;\"></span><span class=\"accent-body\" style=\"left:-0.0833em;\"><span class=\"mord\">^</span></span></span></span><span class=\"vlist-s\">​</span></span><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.1944em;\"><span></span></span></span></span></span></span></span></span> is the fitted model."};
+      let clicked = null;
+
+      const updateTerms = (termClass, classList, action) => {
+        document.querySelectorAll('.' + termClass).forEach(el => el.classList[action](classList));
+      };
+
+      const showDefinition = (definition) => {
+        hoverDiv.innerHTML = definition;
+        hoverDiv.classList.add('visible');
+      };
+
+      document.querySelectorAll('[class*="term-"]').forEach(element => {
+        const termClass = Array.from(element.classList).find(c => c.startsWith('term-'));
+        if (!termClass) return;
+
+        const className = termClass.replace('term-', '');
+        const definition = definitions[className];
+        if (!definition) return;
+
+        element.style.cursor = 'pointer';
+
+        element.addEventListener('click', () => {
+          if (clicked?.element === element) {
+            updateTerms(termClass, 'term-clicked', 'remove');
+            clicked = null;
+            hoverDiv.classList.remove('visible');
+          } else {
+            if (clicked) updateTerms(clicked.termClass, 'term-clicked', 'remove');
+            updateTerms(termClass, 'term-clicked', 'add');
+            clicked = { element, termClass, definition };
+            showDefinition(definition);
+          }
+        });
+
+        element.addEventListener('mouseenter', () => {
+          updateTerms(termClass, 'term-active', 'add');
+          showDefinition(definition);
+        });
+
+        element.addEventListener('mouseleave', () => {
+          updateTerms(termClass, 'term-active', 'remove');
+          clicked ? showDefinition(clicked.definition) : hoverDiv.classList.remove('visible');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

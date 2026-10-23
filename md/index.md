@@ -6,7 +6,9 @@ The core formulas of statistics and machine learning, in the order of the Data S
 
 - mean.md
 - variance.md
+- population-variance.md
 - standard-deviation.md
+- population-standard-deviation.md
 - z-score.md
 - covariance.md
 - correlation.md
@@ -71,6 +73,7 @@ The core formulas of statistics and machine learning, in the order of the Data S
 ## Week 7 · Train/test error and cross-validation
 
 - mse.md
+- mae.md
 - bias-variance.md
 - cross-validation.md
 - adjusted-r-squared.md
@@ -91,6 +94,7 @@ The core formulas of statistics and machine learning, in the order of the Data S
 
 ## Week 10 · Regularized regression
 
+- lp-norm.md
 - ridge.md
 - lasso.md
 - regularization-constraint.md
