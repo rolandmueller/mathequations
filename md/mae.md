@@ -1,5 +1,7 @@
 # Mean Absolute Error
 
+<!-- term-order: mae norm sum y pred abs -->
+
 ## Equation
 
 $$

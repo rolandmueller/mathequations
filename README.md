@@ -6,6 +6,7 @@ Interactive, colour-coded explanations of the core equations of statistics and m
 
 - `md/` – one Markdown file per equation ([content format](https://github.com/stared/equations-explained-colorfully/blob/main/README.md#content-format))
 - `md/index.md` – order and sections of the index page; reorder by moving the `- file.md` lines
+- Colours follow the order in which terms first appear in an equation. To give the same quantity the same colour on related pages, add a line like `<!-- term-order: mae norm sum y pred abs -->` to the `.md` file (see `md/mae.md`); unlisted terms follow in their usual order
 - `html/` – the built pages (`index.html` plus one page per equation), published to GitHub Pages by `.github/workflows/pages.yml` whenever `html/` changes on `main`
 - `build/compile.ts` – renders all equations with the app's own parser and HTML exporter
 - `patches/hover-fix.patch` – makes terms under square roots and in denominators hoverable; applied on top of the pinned upstream revision

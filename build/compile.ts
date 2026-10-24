@@ -112,9 +112,27 @@ function codeSpansToMath(markdown: string): string {
   return markdown.slice(0, firstDefinition) + definitions;
 }
 
+// Colors follow the order in which terms first appear in the equation. A line
+//   <!-- term-order: mae norm sum y pred abs -->
+// overrides that order, so the same quantity can get the same color on related
+// pages. Terms not listed keep their relative order after the listed ones.
+const TERM_ORDER = /^<!--\s*term-order:\s*(.*?)\s*-->[ \t]*\n?/m;
+
+function applyTermOrder(order: string[], parsed: ReturnType<typeof parseContent>) {
+  const unknown = order.filter((t) => !parsed.termOrder.includes(t));
+  if (unknown.length > 0) {
+    parsed.errors.push(`term-order lists terms not marked in the equation: ${unknown.join(', ')}`);
+    return;
+  }
+  parsed.termOrder = [...order, ...parsed.termOrder.filter((t) => !order.includes(t))];
+}
+
 function compile(file: string): Equation | null {
-  const markdown = codeSpansToMath(readFileSync(join(mdDir, file), 'utf-8'));
+  let markdown = codeSpansToMath(readFileSync(join(mdDir, file), 'utf-8'));
+  const termOrder = markdown.match(TERM_ORDER)?.[1].split(/[\s,]+/).filter(Boolean);
+  markdown = markdown.replace(TERM_ORDER, '');
   const parsed = parseContent(markdown);
+  if (termOrder) applyTermOrder(termOrder, parsed);
   parsed.warnings.forEach((w) => console.warn(`  ! ${file}: ${w}`));
   if (parsed.errors.length > 0) {
     parsed.errors.forEach((e) => console.error(`  ✗ ${file}: ${e}`));
