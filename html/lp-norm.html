@@ -170,6 +170,16 @@
     .eq-nav { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.9rem; margin-bottom: 1.5rem; }
     .eq-nav a { color: #6b7280; text-decoration: none; }
     .eq-nav a:hover { color: #2563eb; }
+
+    /* Phones: smaller equations, and sideways scrolling for any that still
+       don't fit (auto margins centre an equation that fits, and keep its
+       left edge reachable when it overflows) */
+    @media (max-width: 600px) {
+      body { padding: 1.25rem 1rem; }
+      .equation-container { justify-content: flex-start; overflow-x: auto; padding: 1rem 0; margin-bottom: 1rem; }
+      .equation-container .katex-display { margin: 0 auto; }
+      .equation-container .katex { font-size: 1.1rem; }
+    }
   </style>
 </head>
 <body>

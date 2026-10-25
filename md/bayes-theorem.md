@@ -3,16 +3,19 @@
 ## Equation
 
 $$
-\mark[post]{P(H \mid E)} = \frac{\mark[like]{P(E \mid H)} \, \mark[prior]{P(H)}}{\mark[evid]{P(E)}}
+\begin{aligned}
+\mark[post]{P(H \mid E)} &= \frac{\mark[like]{P(E \mid H)} \, \mark[prior]{P(H)}}{\mark[evid]{P(E)}} \\[14pt]
+\mark[post]{P(H \mid E)} &= \frac{\mark[like]{P(E \mid H)} \, \mark[prior]{P(H)}}{\mark[like]{P(E \mid H)} \, \mark[prior]{P(H)} + \mark[likenot]{P(E \mid \text{not } H)} \, \mark[priornot]{P(\text{not } H)}}
+\end{aligned}
 $$
 
 ## Description
 
-Bayes' theorem turns a conditional probability around. It gives the [probability of a hypothesis after seeing evidence]{.post} from the [probability of that evidence if the hypothesis were true]{.like}, the [probability of the hypothesis beforehand]{.prior}, and the [overall probability of the evidence]{.evid}.
+Bayes' theorem turns a conditional probability around. It gives the [probability of a hypothesis after seeing evidence]{.post} from the [probability of that evidence if the hypothesis were true]{.like}, the [probability of the hypothesis beforehand]{.prior}, and the [overall probability of the evidence]{.evid}. The second line writes out that overall probability with the law of total probability: the evidence arises either with the hypothesis or [without it]{.likenot}, weighted by [how common that is]{.priornot}. The numerator reappears as the first part of the denominator, so the posterior is the share of all the ways to see the evidence that come from the hypothesis.
 
 Running example, used in every definition: a disease affects 1% of people. A test detects 99% of sick people, but also wrongly flags 5% of healthy people. You test positive. The hypothesis H is "I have the disease", the evidence E is "my test is positive". Bayes' theorem shows why you are still probably healthy.
 
-Read aloud: [the probability of H given E]{.post} equals [the probability of E given H]{.like} times [the probability of H]{.prior}, over [the probability of E]{.evid}.
+Read aloud: [the probability of H given E]{.post} equals [the probability of E given H]{.like} times [the probability of H]{.prior}, over [the probability of E]{.evid}. Written out: the same numerator, over itself plus [the probability of E given not H]{.likenot} times [the probability of not H]{.priornot}.
 
 ## .post
 
@@ -52,6 +55,22 @@ How often the evidence occurs at all, whether or not the hypothesis is true. In 
 
 $P(+) = P(+ \mid \text{sick})\,P(\text{sick}) + P(+ \mid \text{healthy})\,P(\text{healthy}) = 0.99 \cdot 0.01 + 0.05 \cdot 0.99 = 0.0594$.
 
-Most of these 5.94% are false alarms from the large healthy group, which is why the posterior is low. Dividing by $P(E)$ makes the posteriors of all hypotheses add up to 1: $P(\text{sick} \mid +) \approx 0.17$ and $P(\text{healthy} \mid +) \approx 0.83$.
+The second line of the equation shows this sum directly in the denominator. Most of these 5.94% are false alarms from the large healthy group, which is why the posterior is low. Dividing by $P(E)$ makes the posteriors of all hypotheses add up to 1: $P(\text{sick} \mid +) \approx 0.17$ and $P(\text{healthy} \mid +) \approx 0.83$.
 
 With data, all these pieces are counts in a cross-table: `pd.crosstab(df.sick, df.positive, normalize="columns")` gives $P(H \mid E)$ directly, `normalize="index"` gives $P(E \mid H)$.
+
+## .likenot
+
+Probability of the evidence without the hypothesis, $P(E \mid \text{not } H)$.
+
+Pronounced: "the probability of E given not H".
+
+In the example, the probability of a positive test for a healthy person: $P(+ \mid \text{healthy}) = 0.05$, the false positive rate (one minus the specificity). It is small, but multiplied by the large healthy group it produces most of the positive tests: $0.05 \cdot 0.99 = 0.0495$ against $0.99 \cdot 0.01 = 0.0099$ from the sick. Lowering it is the most effective way to make a positive result more meaningful.
+
+## .priornot
+
+Probability that the hypothesis is false, $P(\text{not } H)$.
+
+Pronounced: "the probability of not H".
+
+Always $1 - P(H)$. In the example, $P(\text{healthy}) = 0.99$. With the numbers filled in, the second line reads $\frac{0.99 \cdot 0.01}{0.99 \cdot 0.01 + 0.05 \cdot 0.99} = \frac{0.0099}{0.0594} \approx 0.17$.
