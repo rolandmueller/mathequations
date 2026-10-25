@@ -150,6 +150,30 @@ function compile(file: string): Equation | null {
   };
 }
 
+// Shrink any equation that is wider than its box (phones, narrow windows) so
+// it fits without sideways scrolling, which iPhones hide until you swipe.
+// Below 11px it stops shrinking and the box scrolls instead.
+const FIT_SCRIPT = `
+  <script>
+    (function () {
+      function fit() {
+        document.querySelectorAll('.equation-container, .card .eq').forEach(function (box) {
+          var k = box.querySelector('.katex');
+          if (!k) return;
+          k.style.fontSize = '';
+          if (box.scrollWidth <= box.clientWidth) return;
+          var size = parseFloat(getComputedStyle(k).fontSize) * box.clientWidth / box.scrollWidth * 0.97;
+          k.style.fontSize = Math.max(size, 11) + 'px';
+        });
+      }
+      fit();
+      window.addEventListener('load', fit);
+      window.addEventListener('resize', fit);
+      if (document.fonts) document.fonts.ready.then(fit);
+    })();
+  </script>
+</body>`;
+
 // Add "all equations" and prev/next links to a compiled page
 function addNav(eq: Equation, prev: Equation | undefined, next: Equation | undefined): string {
   const link = (e: Equation | undefined, arrow: string, before: boolean) =>
@@ -175,7 +199,7 @@ function addNav(eq: Equation, prev: Equation | undefined, next: Equation | undef
       .equation-container .katex { font-size: 1.1rem; }
     }
   </style>`;
-  return eq.html.replace('</style>', style).replace('<body>', `<body>${nav}`);
+  return eq.html.replace('</style>', style).replace('<body>', `<body>${nav}`).replace('</body>', FIT_SCRIPT);
 }
 
 // --- Index page ----------------------------------------------------------------
@@ -254,7 +278,7 @@ ${body}
   <div class="footer">
     <p>Created with <a href="https://github.com/stared/equations-explained-colorfully" target="_blank">Equations Explained Colorfully</a></p>
   </div>
-</body>
+${FIT_SCRIPT}
 </html>
 `;
 }

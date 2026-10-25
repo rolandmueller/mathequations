@@ -278,5 +278,24 @@ The index <span class="katex"><span class="katex-mathml"><math xmlns="http://www
       });
     })();
   </script>
+
+  <script>
+    (function () {
+      function fit() {
+        document.querySelectorAll('.equation-container, .card .eq').forEach(function (box) {
+          var k = box.querySelector('.katex');
+          if (!k) return;
+          k.style.fontSize = '';
+          if (box.scrollWidth <= box.clientWidth) return;
+          var size = parseFloat(getComputedStyle(k).fontSize) * box.clientWidth / box.scrollWidth * 0.97;
+          k.style.fontSize = Math.max(size, 11) + 'px';
+        });
+      }
+      fit();
+      window.addEventListener('load', fit);
+      window.addEventListener('resize', fit);
+      if (document.fonts) document.fonts.ready.then(fit);
+    })();
+  </script>
 </body>
 </html>

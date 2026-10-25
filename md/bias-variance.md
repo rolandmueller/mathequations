@@ -3,7 +3,11 @@
 ## Equation
 
 $$
-\mark[err]{E\!\left[ \left( y_0 - \hat{f}(x_0) \right)^2 \right]} = \mark[var]{\mathrm{Var}\!\left( \hat{f}(x_0) \right)} + \mark[bias]{\left[ \mathrm{Bias}\!\left( \hat{f}(x_0) \right) \right]^2} + \mark[noise]{\mathrm{Var}(\varepsilon)}
+\begin{aligned}
+\mark[err]{E\!\left[ \left( y_0 - \hat{f}(x_0) \right)^2 \right]} &= \mark[var]{\mathrm{Var}\!\left( \hat{f}(x_0) \right)} \\[4pt]
+&\quad + \mark[bias]{\left[ \mathrm{Bias}\!\left( \hat{f}(x_0) \right) \right]^2} \\[4pt]
+&\quad + \mark[noise]{\mathrm{Var}(\varepsilon)}
+\end{aligned}
 $$
 
 ## Description
