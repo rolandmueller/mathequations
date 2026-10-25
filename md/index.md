@@ -18,6 +18,7 @@ The core formulas of statistics and machine learning, in the order of the Data S
 - expected-value.md
 - law-of-large-numbers.md
 - conditional-probability.md
+- law-of-total-probability.md
 - bayes-theorem.md
 - accuracy.md
 

@@ -48,7 +48,7 @@ Evidence $P(E)$.
 
 Pronounced: "the probability of E".
 
-How often the evidence occurs at all, whether or not the hypothesis is true. In the example, the share of all people who test positive, computed with the law of total probability from sick and healthy people:
+How often the evidence occurs at all, whether or not the hypothesis is true. In the example, the share of all people who test positive, computed with the law of total probability (previous page) from sick and healthy people:
 
 $P(+) = P(+ \mid \text{sick})\,P(\text{sick}) + P(+ \mid \text{healthy})\,P(\text{healthy}) = 0.99 \cdot 0.01 + 0.05 \cdot 0.99 = 0.0594$.
 
